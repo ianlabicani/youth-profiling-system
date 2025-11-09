@@ -1,10 +1,101 @@
-@extends('brgy.shell')
+@extends('shell')
 
 @section('title', 'Barangay Dashboard')
 @section('content')
-    <div class="container mx-auto p-4">
-        <h1 class="text-2xl font-bold mb-4">Welcome to the Barangay Dashboard</h1>
+    <!-- Sidebar -->
+    <div id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white shadow-lg z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+        <div class="flex flex-col h-full">
+            <!-- Logo -->
+            <div class="flex items-center space-x-2 p-4 border-b">
+                <img src="{{ asset('images/youth-logo.png') }}" alt="Logo" class="h-10 w-10 rounded-full object-cover">
+                <div>
+                    <span class="text-lg font-bold text-gray-800">Barangay Youth Profiling</span>
+                    <p class="text-xs text-gray-600">Barangay Dashboard</p>
+                </div>
+            </div>
+
+            <!-- Nav Items -->
+            <nav class="flex-1 px-4 py-4 space-y-2">
+                <a href="/brgy/dashboard" class="flex items-center px-4 py-2 {{ request()->is('brgy/dashboard') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">
+                    <i class="fas fa-home mr-3"></i>Dashboard
+                </a>
+
+                <a href="/brgy/youth-registration" class="flex items-center px-4 py-2 {{ request()->is('brgy/youth-registration') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">
+                    <i class="fas fa-user-plus mr-3"></i>Youth Registration
+                </a>
+
+                <a href="/brgy/organizations" class="flex items-center px-4 py-2 {{ request()->is('brgy/organizations*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">
+                    <i class="fas fa-users mr-3"></i>Organizations
+                </a>
+
+                <a href="/brgy/events" class="flex items-center px-4 py-2 {{ request()->is('brgy/events*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">
+                    <i class="fas fa-calendar-alt mr-3"></i>Event Management
+                </a>
+
+                <a href="/brgy/profiles" class="flex items-center px-4 py-2 {{ request()->is('brgy/profiles*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">
+                    <i class="fas fa-id-card mr-3"></i>Profile Management
+                </a>
+            </nav>
+
+            <!-- Profile Dropdown at bottom -->
+            <div class="border-t p-4">
+                <div class="relative">
+                    <button id="profile-btn" class="w-full flex items-center px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition">
+                        <i class="fas fa-user-circle mr-3"></i>{{ auth()->user()->name }}
+                        <i class="fas fa-chevron-down ml-auto"></i>
+                    </button>
+
+                    <div id="profile-menu" class="hidden absolute bottom-full left-0 w-full bg-white rounded-lg shadow-xl border border-gray-200 mb-2">
+                        <div class="py-2">
+                            <a href="/brgy/profile/edit" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">
+                                <i class="fas fa-user-cog w-5 mr-3 text-blue-600"></i>
+                                <span class="font-medium">Profile Settings</span>
+                            </a>
+                            <div class="border-t border-gray-200 my-2"></div>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="w-full flex items-center px-4 py-3 text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
+                                    <i class="fas fa-sign-out-alt w-5 mr-3 text-red-600"></i>
+                                    <span class="font-medium">Logout</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    @yield('brgy-content')
+    <!-- Mobile Menu Button -->
+    <button id="mobile-menu-btn" class="md:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-lg text-gray-700 hover:bg-gray-100 transition">
+        <i class="fas fa-bars text-xl"></i>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            const sidebar = document.getElementById('sidebar');
+            const profileBtn = document.getElementById('profile-btn');
+            const profileMenu = document.getElementById('profile-menu');
+
+            menuBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('-translate-x-full');
+            });
+
+            profileBtn.addEventListener('click', function() {
+                profileMenu.classList.toggle('hidden');
+            });
+
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                if (!sidebar.contains(event.target) && !menuBtn.contains(event.target) && window.innerWidth < 768) {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            });
+        });
+    </script>
+
+        <div class="md:ml-64 p-4 mt-16 md:mt-0 mb-10">
+            @yield('brgy-content')
+        </div>
 @endsection

@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
             'email' => 'barangay@mail.com',
             'password' => Hash::make('11111111'),
         ]);
-        $barangayUser->roles()->attach(Role::where('name', 'BARANGAY')->first());
+        $barangayUser->roles()->attach(Role::where('name', 'barangay')->first());
 
         // Municipal SK Official
         $municipalUser = User::create([
@@ -28,7 +28,7 @@ class UserSeeder extends Seeder
             'email' => 'municipal@mail.com',
             'password' => Hash::make('11111111'),
         ]);
-        $municipalUser->roles()->attach(Role::where('name', 'MUNICIPAL')->first());
+        $municipalUser->roles()->attach(Role::where('name', 'municipal')->first());
 
         // Provincial SK Official
         $provincialUser = User::create([
@@ -36,6 +36,6 @@ class UserSeeder extends Seeder
             'email' => 'provincial@mail.com',
             'password' => Hash::make('11111111'),
         ]);
-        $provincialUser->roles()->attach(Role::where('name', 'PROVINCIAL')->first());
+        $provincialUser->roles()->attach(Role::where('name', 'provincial')->first());
     }
 }
