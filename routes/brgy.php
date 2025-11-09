@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BRGY\YouthController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->prefix('brgy')->name('brgy.')->group(function () {
@@ -7,5 +8,11 @@ Route::middleware(['auth', 'verified'])->prefix('brgy')->name('brgy.')->group(fu
     Route::get('/dashboard', function () {
         return view('brgy.dashboard');
     })->name('dashboard');
+
+    // Youth Management Routes
+    Route::resource('youth', YouthController::class);
+
+    // Youth Heatmap
+    Route::get('heatmap', [YouthController::class, 'heatmap'])->name('youth.heatmap');
 
 });

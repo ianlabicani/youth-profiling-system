@@ -16,12 +16,16 @@
 
             <!-- Nav Items -->
             <nav class="flex-1 px-4 py-4 space-y-2">
-                <a href="/brgy/dashboard" class="flex items-center px-4 py-2 {{ request()->is('brgy/dashboard') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">
+                <a href="{{ route('brgy.dashboard') }}" class="flex items-center px-4 py-2 {{ request()->is('brgy/dashboard') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">
                     <i class="fas fa-home mr-3"></i>Dashboard
                 </a>
 
-                <a href="/brgy/youth-registration" class="flex items-center px-4 py-2 {{ request()->is('brgy/youth-registration') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">
+                <a href="{{ route('brgy.youth.index') }}" class="flex items-center px-4 py-2 {{ request()->is('brgy/youth*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">
                     <i class="fas fa-user-plus mr-3"></i>Youth Registration
+                </a>
+
+                <a href="{{ route('brgy.youth.heatmap') }}" class="flex items-center px-4 py-2 {{ request()->is('brgy/youth/heatmap') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">
+                    <i class="fas fa-map mr-3"></i>Youth Heatmap
                 </a>
 
                 <a href="/brgy/organizations" class="flex items-center px-4 py-2 {{ request()->is('brgy/organizations*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">
