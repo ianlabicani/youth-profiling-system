@@ -41,6 +41,9 @@
                 </div>
 
                 <div class="pt-4 border-t flex gap-2">
+                    <a href="{{ route('municipal.barangays.show', $barangay) }}" class="flex-1 inline-flex items-center justify-center px-3 py-2 text-sm bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition">
+                        <i class="fas fa-eye mr-1"></i>View
+                    </a>
                     <a href="{{ route('municipal.barangays.edit', $barangay) }}" class="flex-1 inline-flex items-center justify-center px-3 py-2 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition">
                         <i class="fas fa-edit mr-1"></i>Edit
                     </a>
