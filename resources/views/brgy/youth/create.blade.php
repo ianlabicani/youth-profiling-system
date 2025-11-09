@@ -117,24 +117,41 @@
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Location Information</h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Barangay -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Purok</label>
-                            <input
-                                type="text"
-                                name="purok"
-                                value="{{ old('purok') }}"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Barangay *</label>
+                            <select
+                                name="barangay"
+                                id="barangay"
+                                class="w-full px-4 py-2 border @error('barangay') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                required
                             >
+                                <option value="">Select Barangay...</option>
+                                @foreach($barangays as $barangay)
+                                    <option value="{{ $barangay }}" {{ old('barangay') === $barangay ? 'selected' : '' }}>
+                                        {{ $barangay }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('barangay')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
 
+                        <!-- Purok -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Barangay</label>
-                            <input
-                                type="text"
-                                name="barangay"
-                                value="{{ old('barangay') }}"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Purok *</label>
+                            <select
+                                name="purok"
+                                id="purok"
+                                class="w-full px-4 py-2 border @error('purok') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                required
                             >
+                                <option value="">Select Purok...</option>
+                            </select>
+                            @error('purok')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div>
@@ -142,8 +159,9 @@
                             <input
                                 type="text"
                                 name="municipality"
-                                value="{{ old('municipality') }}"
+                                value="{{ old('municipality', 'Camalaniugan') }}"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                readonly
                             >
                         </div>
 
@@ -152,8 +170,9 @@
                             <input
                                 type="text"
                                 name="province"
-                                value="{{ old('province') }}"
+                                value="{{ old('province', 'Cagayan') }}"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                readonly
                             >
                         </div>
                     </div>
@@ -374,6 +393,37 @@
                         .openPopup();
                 }
             }
+        }
+
+        // Purok mapping data
+        const puroksByBarangay = @json($puroksByBarangay);
+
+        // Handle barangay change to populate puroks
+        document.getElementById('barangay').addEventListener('change', function() {
+            const selectedBarangay = this.value;
+            const purokSelect = document.getElementById('purok');
+
+            // Clear existing options
+            purokSelect.innerHTML = '<option value="">Select Purok...</option>';
+
+            // Populate puroks for selected barangay
+            if (selectedBarangay && puroksByBarangay[selectedBarangay]) {
+                puroksByBarangay[selectedBarangay].forEach(function(purok) {
+                    const option = document.createElement('option');
+                    option.value = purok;
+                    option.textContent = purok;
+                    if (purok === "{{ old('purok') }}") {
+                        option.selected = true;
+                    }
+                    purokSelect.appendChild(option);
+                });
+            }
+        });
+
+        // Trigger change event on page load if barangay is already selected
+        const initialBarangay = document.getElementById('barangay').value;
+        if (initialBarangay) {
+            document.getElementById('barangay').dispatchEvent(new Event('change'));
         }
     </script>
 @endsection
