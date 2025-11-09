@@ -51,6 +51,7 @@
                         <tr>
                             <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Name</th>
                             <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Email</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Barangay</th>
                             <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Created</th>
                             <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
                         </tr>
@@ -67,6 +68,15 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-gray-600">{{ $account->email }}</td>
+                                <td class="px-6 py-4">
+                                    @if ($account->barangays->first())
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                            <i class="fas fa-map-pin mr-1"></i>{{ $account->barangays->first()->name }}
+                                        </span>
+                                    @else
+                                        <span class="text-gray-400 text-sm italic">Not assigned</span>
+                                    @endif
+                                </td>
                                 <td class="px-6 py-4 text-sm text-gray-600">
                                     {{ $account->created_at->format('M d, Y') }}
                                 </td>

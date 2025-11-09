@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Municipal;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\Barangay;
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class AccountController extends Controller
@@ -17,7 +18,7 @@ class AccountController extends Controller
         $barangayRole = Role::where('name', 'barangay')->first();
         $accounts = User::whereHas('roles', function ($query) use ($barangayRole) {
             $query->where('role_id', $barangayRole?->id);
-        })->paginate(15);
+        })->with('barangays')->paginate(15);
 
         return view('municipal.accounts.index', compact('accounts'));
     }
@@ -27,7 +28,9 @@ class AccountController extends Controller
      */
     public function create()
     {
-        return view('municipal.accounts.create');
+        $barangays = Barangay::orderBy('name')->get();
+
+        return view('municipal.accounts.create', compact('barangays'));
     }
 
     /**
@@ -39,6 +42,7 @@ class AccountController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
+            'barangay_id' => 'nullable|exists:barangays,id',
         ]);
 
         $user = User::create([
@@ -51,6 +55,11 @@ class AccountController extends Controller
         $barangayRole = Role::firstOrCreate(['name' => 'barangay']);
         $user->roles()->attach($barangayRole);
 
+        // Assign to barangay if provided
+        if ($validated['barangay_id']) {
+            $user->barangays()->attach($validated['barangay_id']);
+        }
+
         return redirect()->route('municipal.accounts.index')
             ->with('success', 'Barangay account created successfully.');
     }
@@ -60,7 +69,10 @@ class AccountController extends Controller
      */
     public function edit(User $account)
     {
-        return view('municipal.accounts.edit', compact('account'));
+        $barangays = Barangay::orderBy('name')->get();
+        $assignedBarangay = $account->barangays()->first();
+
+        return view('municipal.accounts.edit', compact('account', 'barangays', 'assignedBarangay'));
     }
 
     /**
@@ -70,8 +82,9 @@ class AccountController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $account->id,
+            'email' => 'required|email|unique:users,email,'.$account->id,
             'password' => 'nullable|string|min:8|confirmed',
+            'barangay_id' => 'nullable|exists:barangays,id',
         ]);
 
         $account->update([
@@ -79,8 +92,17 @@ class AccountController extends Controller
             'email' => $validated['email'],
         ]);
 
-        if (!empty($validated['password'])) {
+        if (! empty($validated['password'])) {
             $account->update(['password' => bcrypt($validated['password'])]);
+        }
+
+        // Update barangay assignment
+        if ($validated['barangay_id']) {
+            // Reassign user to the selected barangay
+            $account->barangays()->sync([$validated['barangay_id']]);
+        } else {
+            // Remove all barangay assignments if none selected
+            $account->barangays()->detach();
         }
 
         return redirect()->route('municipal.accounts.index')

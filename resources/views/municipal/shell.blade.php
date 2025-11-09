@@ -24,6 +24,10 @@
                     <i class="fas fa-users mr-3"></i>Accounts
                 </a>
 
+                <a href="{{ route('municipal.barangays.index') }}" class="flex items-center px-4 py-2 {{ request()->is('municipal/barangays*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">
+                    <i class="fas fa-map-pin mr-3"></i>Barangays
+                </a>
+
                 <a href="{{ route('municipal.dashboard') }}" class="flex items-center px-4 py-2 {{ request()->is('municipal/organizations*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">
                     <i class="fas fa-building mr-3"></i>Organizations
                 </a>

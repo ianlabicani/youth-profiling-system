@@ -14,14 +14,6 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Barangay SK Official
-        $barangayUser = User::create([
-            'name' => 'Barangay SK Official',
-            'email' => 'barangay@mail.com',
-            'password' => Hash::make('11111111'),
-        ]);
-        $barangayUser->roles()->attach(Role::where('name', 'barangay')->first());
-
         // Municipal SK Official
         $municipalUser = User::create([
             'name' => 'Municipal SK Official',
@@ -29,13 +21,5 @@ class UserSeeder extends Seeder
             'password' => Hash::make('11111111'),
         ]);
         $municipalUser->roles()->attach(Role::where('name', 'municipal')->first());
-
-        // Provincial SK Official
-        $provincialUser = User::create([
-            'name' => 'Provincial SK Official',
-            'email' => 'provincial@mail.com',
-            'password' => Hash::make('11111111'),
-        ]);
-        $provincialUser->roles()->attach(Role::where('name', 'provincial')->first());
     }
 }

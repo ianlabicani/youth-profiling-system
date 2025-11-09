@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Municipal\AccountController;
+use App\Http\Controllers\Municipal\BarangayController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->prefix('municipal')->name('municipal.')->group(function () {
@@ -11,5 +12,8 @@ Route::middleware(['auth', 'verified'])->prefix('municipal')->name('municipal.')
 
     // Accounts Management Routes
     Route::resource('accounts', AccountController::class);
+
+    // Barangays Management Routes
+    Route::resource('barangays', BarangayController::class);
 
 });

@@ -96,6 +96,34 @@
                     placeholder="Re-enter your new password">
             </div>
 
+            <!-- Barangay Assignment Field -->
+            <div class="border-t pt-6">
+                <label for="barangay_id" class="block text-sm font-medium text-gray-700 mb-2">
+                    Assigned Barangay
+                </label>
+                <select
+                    id="barangay_id"
+                    name="barangay_id"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">-- No Assignment --</option>
+                    @foreach ($barangays as $barangay)
+                        <option value="{{ $barangay->id }}" {{ $assignedBarangay?->id === $barangay->id ? 'selected' : '' }}>
+                            {{ $barangay->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('barangay_id')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
+                <p class="text-gray-500 text-sm mt-1">
+                    @if ($assignedBarangay)
+                        Currently assigned to: <strong>{{ $assignedBarangay->name }}</strong>
+                    @else
+                        This account is not assigned to any barangay
+                    @endif
+                </p>
+            </div>
+
             <!-- Form Actions -->
             <div class="flex gap-3 pt-4">
                 <button

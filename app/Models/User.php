@@ -51,6 +51,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class)->withTimestamps();
     }
 
+    public function barangays()
+    {
+        return $this->belongsToMany(Barangay::class)->withTimestamps();
+    }
+
     public function hasRole($roleName)
     {
         return $this->roles()->where('name', $roleName)->exists();
