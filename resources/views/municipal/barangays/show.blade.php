@@ -28,6 +28,42 @@
                 <p class="text-lg text-gray-800 mt-1">{{ $barangay->name }}</p>
             </div>
 
+            <!-- Administrator Account -->
+            <div class="border-t pt-4">
+                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Administrator Account</h3>
+                @php
+                    $admin = $barangay->users()->first();
+                @endphp
+                @if($admin)
+                    <div class="mt-3 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="space-y-2">
+                            <div>
+                                <p class="text-xs text-gray-600">Account Name</p>
+                                <p class="text-base font-medium text-gray-800">{{ $admin->name }}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-600">Email</p>
+                                <p class="text-base font-medium text-gray-800">{{ $admin->email }}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-600">Status</p>
+                                <p class="text-base font-medium">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <i class="fas fa-check-circle mr-1"></i>Active
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    <div class="mt-3 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <p class="text-sm text-yellow-800">
+                            <i class="fas fa-exclamation-circle mr-2"></i>No administrator account assigned
+                        </p>
+                    </div>
+                @endif
+            </div>
+
             <!-- Created At -->
             <div class="border-t pt-4">
                 <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Created</h3>
@@ -57,3 +93,4 @@
     </div>
 </div>
 @endsection
+

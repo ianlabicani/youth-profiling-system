@@ -14,6 +14,7 @@ class BarangayController extends Controller
     public function index()
     {
         $barangays = Barangay::orderBy('name')->paginate(15);
+
         return view('municipal.barangays.index', compact('barangays'));
     }
 
@@ -62,7 +63,7 @@ class BarangayController extends Controller
     public function update(Request $request, Barangay $barangay)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:barangays,name,' . $barangay->id,
+            'name' => 'required|string|max:255|unique:barangays,name,'.$barangay->id,
         ]);
 
         $barangay->update($validated);
