@@ -92,6 +92,6 @@
     </script>
 
     <div class="md:ml-64 p-4 mt-16 md:mt-0 mb-10">
-    @yield('municipal-content')
+        @yield('municipal-content')
     </div>
 @endsection

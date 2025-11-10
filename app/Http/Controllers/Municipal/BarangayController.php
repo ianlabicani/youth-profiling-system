@@ -82,4 +82,18 @@ class BarangayController extends Controller
         return redirect()->route('municipal.barangays.index')
             ->with('success', 'Barangay deleted successfully.');
     }
+
+    public function youths(Barangay $barangay)
+    {
+        $youths = $barangay->youths()->paginate(15);
+
+        return view('municipal.barangays.youth.index', compact('barangay', 'youths'));
+    }
+
+    public function skCouncils(Barangay $barangay)
+    {
+        $skCouncils = $barangay->skCouncils()->paginate(15);
+
+        return view('municipal.barangays.sk-councils.index', compact('barangay', 'skCouncils'));
+    }
 }
