@@ -48,17 +48,65 @@ class SKCouncilController extends Controller
                 ->withErrors(['error' => 'You are not assigned to any barangay.']);
         }
 
-        // Get SK members from the user's barangay
-        $skMembers = Youth::where('barangay_id', $userBarangay->id)
+        // Check if there are any SK members available
+        $hasSkMembers = Youth::where('barangay_id', $userBarangay->id)
             ->where('status', 'active')
-            ->orderBy('last_name')
-            ->orderBy('first_name')
-            ->get();
+            ->exists();
 
         return view('brgy.sk-councils.create', [
             'userBarangay' => $userBarangay,
-            'skMembers' => $skMembers,
+            'hasSkMembers' => $hasSkMembers,
         ]);
+    }
+
+    /**
+     * Search for youth members (AJAX endpoint)
+     */
+    public function searchYouth(Request $request)
+    {
+        // Get the barangay of the logged-in user
+        $userBarangay = auth()->user()->barangays()->first();
+
+        if (! $userBarangay) {
+            return response()->json(['error' => 'You are not assigned to any barangay.'], 403);
+        }
+
+        $search = $request->input('search', '');
+        $excludeIds = $request->input('exclude', []);
+
+        $query = Youth::where('barangay_id', $userBarangay->id)
+            ->where('status', 'active');
+
+        if (! empty($excludeIds)) {
+            $query->whereNotIn('id', $excludeIds);
+        }
+
+        if (! empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', "%$search%")
+                    ->orWhere('middle_name', 'like', "%$search%")
+                    ->orWhere('last_name', 'like', "%$search%");
+            });
+        }
+
+        $youths = $query->orderBy('last_name')
+            ->orderBy('first_name')
+            ->limit(20)
+            ->get()
+            ->map(function ($youth) {
+                return [
+                    'id' => $youth->id,
+                    'name' => $youth->first_name.
+                             ($youth->middle_name ? ' '.substr($youth->middle_name, 0, 1).'.' : '').
+                             ' '.$youth->last_name,
+                    'full_name' => $youth->first_name.' '.
+                                  ($youth->middle_name ? $youth->middle_name.' ' : '').
+                                  $youth->last_name,
+                    'purok' => $youth->purok,
+                ];
+            });
+
+        return response()->json($youths);
     }
 
     /**
@@ -161,17 +209,15 @@ class SKCouncilController extends Controller
                 ->withErrors(['error' => 'You can only edit SK Councils from your barangay.']);
         }
 
-        // Get active youth members from the user's barangay
-        $skMembers = Youth::where('barangay_id', $userBarangay->id)
+        // Check if there are any SK members available
+        $hasSkMembers = Youth::where('barangay_id', $userBarangay->id)
             ->where('status', 'active')
-            ->orderBy('last_name')
-            ->orderBy('first_name')
-            ->get();
+            ->exists();
 
         return view('brgy.sk-councils.edit', [
             'skCouncil' => $skCouncil,
             'userBarangay' => $userBarangay,
-            'skMembers' => $skMembers,
+            'hasSkMembers' => $hasSkMembers,
         ]);
     }
 

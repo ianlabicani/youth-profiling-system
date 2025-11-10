@@ -30,7 +30,7 @@
             </div>
         @endif
 
-        @if($skMembers->isEmpty())
+        @if(!$hasSkMembers)
             <!-- No SK Members Warning -->
             <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-6">
                 <div class="flex items-start gap-3">
@@ -94,22 +94,18 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-2">
                                     <i class="fas fa-crown text-purple-600 mr-1"></i>Chairperson *
                                 </label>
-                                <select
-                                    name="chairperson_id"
-                                    class="w-full px-4 py-2 border @error('chairperson_id') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    required
-                                >
-                                    <option value="">Select Chairperson...</option>
-                                    @foreach($skMembers as $member)
-                                        <option value="{{ $member->id }}" {{ old('chairperson_id') == $member->id ? 'selected' : '' }}>
-                                            {{ $member->first_name }}
-                                            @if($member->middle_name)
-                                                {{ substr($member->middle_name, 0, 1) }}.
-                                            @endif
-                                            {{ $member->last_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <input type="hidden" name="chairperson_id" id="chairperson_id" value="{{ old('chairperson_id') }}">
+                                <div class="flex gap-2">
+                                    <div class="flex-1 px-4 py-2 border @error('chairperson_id') border-red-500 @else border-gray-300 @enderror rounded-lg bg-gray-50" id="chairperson_display">
+                                        <span class="text-gray-400" id="chairperson_text">No chairperson assigned</span>
+                                    </div>
+                                    <button type="button" onclick="openSearchModal('chairperson')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                        <i class="fas fa-search"></i> Assign
+                                    </button>
+                                    <button type="button" onclick="clearSelection('chairperson')" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
                                 @error('chairperson_id')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -120,21 +116,18 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-2">
                                     <i class="fas fa-pen text-blue-600 mr-1"></i>Secretary
                                 </label>
-                                <select
-                                    name="secretary_id"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                >
-                                    <option value="">Select Secretary...</option>
-                                    @foreach($skMembers as $member)
-                                        <option value="{{ $member->id }}" {{ old('secretary_id') == $member->id ? 'selected' : '' }}>
-                                            {{ $member->first_name }}
-                                            @if($member->middle_name)
-                                                {{ substr($member->middle_name, 0, 1) }}.
-                                            @endif
-                                            {{ $member->last_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <input type="hidden" name="secretary_id" id="secretary_id" value="{{ old('secretary_id') }}">
+                                <div class="flex gap-2">
+                                    <div class="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50" id="secretary_display">
+                                        <span class="text-gray-400" id="secretary_text">No secretary assigned</span>
+                                    </div>
+                                    <button type="button" onclick="openSearchModal('secretary')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                        <i class="fas fa-search"></i> Assign
+                                    </button>
+                                    <button type="button" onclick="clearSelection('secretary')" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
                             </div>
 
                             <!-- Treasurer -->
@@ -142,21 +135,18 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-2">
                                     <i class="fas fa-coins text-green-600 mr-1"></i>Treasurer
                                 </label>
-                                <select
-                                    name="treasurer_id"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                >
-                                    <option value="">Select Treasurer...</option>
-                                    @foreach($skMembers as $member)
-                                        <option value="{{ $member->id }}" {{ old('treasurer_id') == $member->id ? 'selected' : '' }}>
-                                            {{ $member->first_name }}
-                                            @if($member->middle_name)
-                                                {{ substr($member->middle_name, 0, 1) }}.
-                                            @endif
-                                            {{ $member->last_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <input type="hidden" name="treasurer_id" id="treasurer_id" value="{{ old('treasurer_id') }}">
+                                <div class="flex gap-2">
+                                    <div class="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50" id="treasurer_display">
+                                        <span class="text-gray-400" id="treasurer_text">No treasurer assigned</span>
+                                    </div>
+                                    <button type="button" onclick="openSearchModal('treasurer')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                        <i class="fas fa-search"></i> Assign
+                                    </button>
+                                    <button type="button" onclick="clearSelection('treasurer')" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -166,24 +156,13 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-users text-indigo-600 mr-1"></i>Kagawad (Council Members)
                         </label>
-                        <p class="text-sm text-gray-600 mb-3">Select multiple members by holding Ctrl (Windows) or Cmd (Mac)</p>
+                        <p class="text-sm text-gray-600 mb-3">Add council members one by one</p>
 
-                        <select
-                            name="kagawad_ids[]"
-                            multiple
-                            size="8"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        >
-                            @foreach($skMembers as $member)
-                                <option value="{{ $member->id }}" {{ in_array($member->id, old('kagawad_ids', [])) ? 'selected' : '' }}>
-                                    {{ $member->first_name }}
-                                    @if($member->middle_name)
-                                        {{ substr($member->middle_name, 0, 1) }}.
-                                    @endif
-                                    {{ $member->last_name }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <div id="kagawad_list" class="space-y-2 mb-3"></div>
+
+                        <button type="button" onclick="openSearchModal('kagawad')" class="w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                            <i class="fas fa-plus mr-2"></i>Add Kagawad
+                        </button>
                         <p class="text-xs text-gray-500 mt-1">Optional: You can assign kagawad members now or later</p>
                     </div>
 
@@ -219,6 +198,200 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Search Modal -->
+            <div id="searchModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+                <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col">
+                    <!-- Modal Header -->
+                    <div class="p-4 border-b flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-gray-800">
+                            <i class="fas fa-search mr-2"></i>Search Youth Member
+                        </h3>
+                        <button type="button" onclick="closeSearchModal()" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+
+                    <!-- Search Input -->
+                    <div class="p-4 border-b">
+                        <input
+                            type="text"
+                            id="youthSearchInput"
+                            placeholder="Search by name..."
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            autocomplete="off"
+                        >
+                    </div>
+
+                    <!-- Results -->
+                    <div class="flex-1 overflow-y-auto p-4">
+                        <div id="searchResults" class="space-y-2">
+                            <div class="text-center text-gray-400 py-8">
+                                <i class="fas fa-search text-4xl mb-2"></i>
+                                <p>Start typing to search for youth members</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         @endif
     </div>
+
+    <script>
+        let currentPosition = null;
+        let selectedKagawad = [];
+
+        // Open search modal
+        function openSearchModal(position) {
+            currentPosition = position;
+            document.getElementById('searchModal').classList.remove('hidden');
+            document.getElementById('youthSearchInput').value = '';
+            document.getElementById('youthSearchInput').focus();
+            searchYouth('');
+        }
+
+        // Close search modal
+        function closeSearchModal() {
+            document.getElementById('searchModal').classList.add('hidden');
+            currentPosition = null;
+        }
+
+        // Get already selected IDs
+        function getExcludedIds() {
+            const excludedIds = [];
+            const chairpersonId = document.getElementById('chairperson_id').value;
+            const secretaryId = document.getElementById('secretary_id').value;
+            const treasurerId = document.getElementById('treasurer_id').value;
+
+            if (chairpersonId) excludedIds.push(chairpersonId);
+            if (secretaryId) excludedIds.push(secretaryId);
+            if (treasurerId) excludedIds.push(treasurerId);
+
+            selectedKagawad.forEach(k => excludedIds.push(k.id.toString()));
+
+            return excludedIds;
+        }
+
+        // Search youth members
+        let searchTimeout = null;
+        async function searchYouth(query) {
+            clearTimeout(searchTimeout);
+
+            searchTimeout = setTimeout(async () => {
+                const resultsDiv = document.getElementById('searchResults');
+                resultsDiv.innerHTML = '<div class="text-center py-4"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
+
+                try {
+                    const excludedIds = getExcludedIds();
+                    const response = await fetch(`{{ route('brgy.sk-councils.search-youth') }}?search=${encodeURIComponent(query)}&exclude=${excludedIds.join(',')}`);
+                    const youths = await response.json();
+
+                    if (youths.length === 0) {
+                        resultsDiv.innerHTML = `
+                            <div class="text-center text-gray-400 py-8">
+                                <i class="fas fa-user-slash text-4xl mb-2"></i>
+                                <p>No youth members found</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    resultsDiv.innerHTML = youths.map(youth => `
+                        <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer" onclick="selectYouth(${youth.id}, '${youth.name.replace(/'/g, "\\'")}')">
+                            <div>
+                                <p class="font-medium text-gray-800">${youth.name}</p>
+                                ${youth.purok ? `<p class="text-sm text-gray-600">Purok ${youth.purok}</p>` : ''}
+                            </div>
+                            <button type="button" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
+                                Select
+                            </button>
+                        </div>
+                    `).join('');
+                } catch (error) {
+                    resultsDiv.innerHTML = `
+                        <div class="text-center text-red-500 py-8">
+                            <i class="fas fa-exclamation-circle text-4xl mb-2"></i>
+                            <p>Error loading results</p>
+                        </div>
+                    `;
+                }
+            }, 300);
+        }
+
+        // Select youth member
+        function selectYouth(id, name) {
+            if (currentPosition === 'kagawad') {
+                addKagawad(id, name);
+            } else {
+                document.getElementById(`${currentPosition}_id`).value = id;
+                document.getElementById(`${currentPosition}_text`).textContent = name;
+                document.getElementById(`${currentPosition}_text`).classList.remove('text-gray-400');
+                document.getElementById(`${currentPosition}_text`).classList.add('text-gray-800');
+            }
+            closeSearchModal();
+        }
+
+        // Clear selection
+        function clearSelection(position) {
+            document.getElementById(`${position}_id`).value = '';
+            document.getElementById(`${position}_text`).textContent = `No ${position} assigned`;
+            document.getElementById(`${position}_text`).classList.add('text-gray-400');
+            document.getElementById(`${position}_text`).classList.remove('text-gray-800');
+        }
+
+        // Add kagawad
+        function addKagawad(id, name) {
+            selectedKagawad.push({ id, name });
+            renderKagawadList();
+        }
+
+        // Remove kagawad
+        function removeKagawad(id) {
+            selectedKagawad = selectedKagawad.filter(k => k.id !== id);
+            renderKagawadList();
+        }
+
+        // Render kagawad list
+        function renderKagawadList() {
+            const listDiv = document.getElementById('kagawad_list');
+
+            if (selectedKagawad.length === 0) {
+                listDiv.innerHTML = '<p class="text-gray-400 text-sm">No kagawad members assigned yet</p>';
+                return;
+            }
+
+            listDiv.innerHTML = selectedKagawad.map(k => `
+                <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg bg-gray-50">
+                    <div>
+                        <input type="hidden" name="kagawad_ids[]" value="${k.id}">
+                        <p class="font-medium text-gray-800">${k.name}</p>
+                    </div>
+                    <button type="button" onclick="removeKagawad(${k.id})" class="text-red-600 hover:text-red-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Setup search input listener
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('youthSearchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => searchYouth(e.target.value));
+            }
+
+            // Close modal on escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeSearchModal();
+            });
+
+            // Close modal on backdrop click
+            document.getElementById('searchModal').addEventListener('click', (e) => {
+                if (e.target.id === 'searchModal') closeSearchModal();
+            });
+
+            // Initialize kagawad list
+            renderKagawadList();
+        });
+    </script>
 @endsection
