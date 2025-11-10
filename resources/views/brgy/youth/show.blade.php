@@ -85,7 +85,7 @@
 
                         <div>
                             <p class="text-sm text-gray-600 mb-1">Barangay</p>
-                            <p class="text-lg font-medium text-gray-800">{{ $youth->barangay ?? 'N/A' }}</p>
+                            <p class="text-lg font-medium text-gray-800">{{ $youth->barangay->name ?? 'N/A' }}</p>
                         </div>
 
                         <div>

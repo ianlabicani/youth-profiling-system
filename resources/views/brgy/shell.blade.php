@@ -28,6 +28,10 @@
                     <i class="fas fa-map mr-3"></i>Youth Heatmap
                 </a>
 
+                <a href="{{ route('brgy.sk-councils.index') }}" class="flex items-center px-4 py-2 {{ request()->is('brgy/youth/heatmap') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">
+                    <i class="fas fa-users mr-3"></i>SK Councils
+                </a>
+
                 <a href="/brgy/organizations" class="flex items-center px-4 py-2 {{ request()->is('brgy/organizations*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">
                     <i class="fas fa-users mr-3"></i>Organizations
                 </a>
@@ -36,9 +40,7 @@
                     <i class="fas fa-calendar-alt mr-3"></i>Event Management
                 </a>
 
-                <a href="/brgy/profiles" class="flex items-center px-4 py-2 {{ request()->is('brgy/profiles*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">
-                    <i class="fas fa-id-card mr-3"></i>Profile Management
-                </a>
+
             </nav>
 
             <!-- Profile Dropdown at bottom -->

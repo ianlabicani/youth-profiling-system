@@ -33,7 +33,6 @@ class Youth extends Model
         'longitude',
         'status',
         'remarks',
-        'is_sk_member',
     ];
 
     /**
@@ -44,7 +43,6 @@ class Youth extends Model
     protected $casts = [
         'skills' => 'array',
         'date_of_birth' => 'date',
-        'is_sk_member' => 'boolean',
     ];
 
     /**

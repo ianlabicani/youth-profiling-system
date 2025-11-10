@@ -16,7 +16,6 @@ return new class extends Migration
             $table->index('latitude');
             $table->index('longitude');
             $table->index('status');
-            $table->index('barangay');
         });
     }
 
@@ -29,7 +28,6 @@ return new class extends Migration
             $table->dropIndex(['latitude']);
             $table->dropIndex(['longitude']);
             $table->dropIndex(['status']);
-            $table->dropIndex(['barangay']);
         });
     }
 };

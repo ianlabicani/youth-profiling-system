@@ -48,8 +48,14 @@
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-600">SK Members</p>
-                    <p class="text-2xl font-bold text-purple-600">{{ $youths->where('is_sk_member', true)->count() }}</p>
+                    <p class="text-sm font-medium text-gray-600">SK Council Members</p>
+                    <p class="text-2xl font-bold text-purple-600">
+                        {{ $youths->filter(function($youth) {
+                            return $youth->chairmanOf->isNotEmpty() ||
+                                   $youth->secretaryOf->isNotEmpty() ||
+                                   $youth->treasurerOf->isNotEmpty();
+                        })->count() }}
+                    </p>
                 </div>
                 <div class="p-3 bg-purple-100 rounded-full">
                     <i class="fas fa-star text-xl text-purple-600"></i>
@@ -123,15 +129,6 @@
                     </select>
                 </div>
 
-                <!-- SK Member Filter -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">SK Member</label>
-                    <select name="is_sk_member" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        <option value="">All</option>
-                        <option value="1" {{ request('is_sk_member') === '1' ? 'selected' : '' }}>Yes</option>
-                        <option value="0" {{ request('is_sk_member') === '0' ? 'selected' : '' }}>No</option>
-                    </select>
-                </div>
             </div>
 
             <!-- Filter Buttons -->
@@ -167,7 +164,7 @@
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Contact</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Sex</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Status</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">SK Member</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">SK Position</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Actions</th>
                         </tr>
                     </thead>
@@ -230,14 +227,20 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-sm">
-                                    @if($youth->is_sk_member)
+                                    @if($youth->chairmanOf->isNotEmpty())
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                                            <i class="fas fa-star mr-1"></i>Yes
+                                            <i class="fas fa-crown mr-1"></i>Chairperson
+                                        </span>
+                                    @elseif($youth->secretaryOf->isNotEmpty())
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                            <i class="fas fa-pen mr-1"></i>Secretary
+                                        </span>
+                                    @elseif($youth->treasurerOf->isNotEmpty())
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            <i class="fas fa-coins mr-1"></i>Treasurer
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                            No
-                                        </span>
+                                        <span class="text-gray-400">-</span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-sm">
@@ -266,7 +269,7 @@
                 <i class="fas fa-users-slash text-5xl text-gray-300 mb-4"></i>
                 <p class="text-gray-600 text-lg font-medium mb-2">No youth records found</p>
                 <p class="text-gray-400">
-                    @if(request()->hasAny(['search', 'barangay_id', 'status', 'sex', 'is_sk_member']))
+                    @if(request()->hasAny(['search', 'barangay_id', 'status', 'sex']))
                         Try adjusting your filters or
                         <a href="{{ route('municipal.youths.index') }}" class="text-blue-600 hover:underline font-medium">reset all filters</a>
                     @else

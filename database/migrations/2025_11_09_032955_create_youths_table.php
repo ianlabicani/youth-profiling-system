@@ -21,7 +21,6 @@ return new class extends Migration
             $table->date('date_of_birth')->nullable();
             $table->enum('sex', ['Male', 'Female', 'Other'])->nullable();
             $table->string('purok')->nullable();
-            $table->string('barangay')->nullable();
             $table->string('municipality')->nullable();
             $table->string('province')->nullable();
             $table->string('contact_number')->nullable();

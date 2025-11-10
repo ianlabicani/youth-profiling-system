@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BRGY\SKCouncilController;
 use App\Http\Controllers\BRGY\YouthController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,5 +15,8 @@ Route::middleware(['auth', 'verified'])->prefix('brgy')->name('brgy.')->group(fu
 
     // Youth Heatmap
     Route::get('heatmap', [YouthController::class, 'heatmap'])->name('youth.heatmap');
+
+    // SK Council Management Routes
+    Route::resource('sk-councils', SKCouncilController::class);
 
 });

@@ -71,11 +71,6 @@
                                 @endif">
                                 {{ ucfirst($youth->status ?? 'unknown') }}
                             </span>
-                            @if($youth->is_sk_member)
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
-                                    <i class="fas fa-star mr-1"></i>SK Member
-                                </span>
-                            @endif
                         </div>
                     </div>
                 </div>

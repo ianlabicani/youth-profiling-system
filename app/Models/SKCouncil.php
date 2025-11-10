@@ -21,6 +21,7 @@ class SKCouncil extends Model
         'secretary_id',
         'treasurer_id',
         'kagawad_ids',
+        'is_active',
     ];
 
     /**
@@ -30,6 +31,7 @@ class SKCouncil extends Model
      */
     protected $casts = [
         'kagawad_ids' => 'array',
+        'is_active' => 'boolean',
     ];
 
     /**
