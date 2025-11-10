@@ -45,6 +45,11 @@ class Youth extends Model
         'date_of_birth' => 'date',
     ];
 
+    public function getNameAttribute()
+    {
+        return $this->first_name.', '.$this->last_name;
+    }
+
     /**
      * Get the barangay that this youth belongs to.
      */

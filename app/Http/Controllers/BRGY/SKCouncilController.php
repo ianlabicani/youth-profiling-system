@@ -169,6 +169,12 @@ class SKCouncilController extends Controller
         // Set the barangay_id
         $validated['barangay_id'] = $userBarangay->id;
 
+        // If this council is being set as active, deactivate all other councils
+        if (isset($validated['is_active']) && $validated['is_active']) {
+            SKCouncil::where('barangay_id', $userBarangay->id)
+                ->update(['is_active' => false]);
+        }
+
         SKCouncil::create($validated);
 
         return redirect()->route('brgy.sk-councils.index')
@@ -244,18 +250,11 @@ class SKCouncilController extends Controller
             'is_active' => 'nullable|boolean',
         ]);
 
-        // If activating this council, check if another council is already active
+        // If activating this council, deactivate all other councils
         if (isset($validated['is_active']) && $validated['is_active']) {
-            $otherActiveCouncil = SKCouncil::where('barangay_id', $userBarangay->id)
-                ->where('is_active', true)
+            SKCouncil::where('barangay_id', $userBarangay->id)
                 ->where('id', '!=', $skCouncil->id)
-                ->first();
-
-            if ($otherActiveCouncil) {
-                return back()->withInput()->withErrors([
-                    'error' => 'Another SK Council is already active. Please deactivate it first.',
-                ]);
-            }
+                ->update(['is_active' => false]);
         }
 
         // Ensure all selected youths belong to the user's barangay and are active
@@ -305,5 +304,29 @@ class SKCouncilController extends Controller
 
         return redirect()->route('brgy.sk-councils.index')
             ->with('success', 'SK Council deleted successfully.');
+    }
+
+    /**
+     * Activate the specified SK Council and deactivate others.
+     */
+    public function activate(SKCouncil $skCouncil)
+    {
+        // Get the barangay of the logged-in user
+        $userBarangay = auth()->user()->barangays()->first();
+
+        if (! $userBarangay || $skCouncil->barangay_id !== $userBarangay->id) {
+            return redirect()->route('brgy.sk-councils.index')
+                ->withErrors(['error' => 'You can only activate SK Councils from your barangay.']);
+        }
+
+        // Deactivate all other councils in this barangay
+        SKCouncil::where('barangay_id', $userBarangay->id)
+            ->update(['is_active' => false]);
+
+        // Activate this council
+        $skCouncil->update(['is_active' => true]);
+
+        return redirect()->route('brgy.sk-councils.index')
+            ->with('success', 'SK Council activated successfully.');
     }
 }

@@ -19,5 +19,6 @@ Route::middleware(['auth', 'verified'])->prefix('brgy')->name('brgy.')->group(fu
     // SK Council Management Routes
     Route::resource('sk-councils', SKCouncilController::class);
     Route::get('sk-councils/search/youth', [SKCouncilController::class, 'searchYouth'])->name('sk-councils.search-youth');
+    Route::post('sk-councils/{skCouncil}/activate', [SKCouncilController::class, 'activate'])->name('sk-councils.activate');
 
 });
