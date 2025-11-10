@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('sk_councils', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('barangay_id')->constrained()->cascadeOnDelete();
             $table->foreignId('chairperson_id')->nullable()->constrained('youths')->cascadeOnDelete();
             $table->foreignId('secretary_id')->nullable()->constrained('youths')->cascadeOnDelete();
             $table->foreignId('treasurer_id')->nullable()->constrained('youths')->cascadeOnDelete();
