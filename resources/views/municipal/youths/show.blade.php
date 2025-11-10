@@ -226,12 +226,12 @@
                         <div>
                             <label class="text-sm font-medium text-gray-600">Barangay</label>
                             <p class="mt-1 text-gray-900 font-medium">
-                                @if($youth->barangay_id)
+                                @if($youth->barangay_id && $youth->barangay)
                                     <a href="{{ route('municipal.barangays.show', $youth->barangay_id) }}" class="text-blue-600 hover:underline">
-                                        {{ $youth->barangay()->first()->name }}
+                                        {{ $youth->barangay->name }}
                                     </a>
                                 @else
-                                    {{ $youth->getAttributeValue('barangay') ?? '-' }}
+                                    -
                                 @endif
                             </p>
                         </div>

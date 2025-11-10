@@ -118,25 +118,16 @@
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Location Information</h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Barangay -->
+                        <!-- Barangay (Read-only) -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Barangay *</label>
-                            <select
-                                name="barangay"
-                                id="barangay"
-                                class="w-full px-4 py-2 border @error('barangay') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                required
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Barangay</label>
+                            <input
+                                type="text"
+                                value="{{ $userBarangay->name }}"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+                                readonly
                             >
-                                <option value="">Select Barangay...</option>
-                                @foreach($barangays as $barangay)
-                                    <option value="{{ $barangay }}" {{ old('barangay', $youth->barangay) === $barangay ? 'selected' : '' }}>
-                                        {{ $barangay }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('barangay')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
+                            <p class="text-xs text-gray-500 mt-1">Barangay cannot be changed</p>
                         </div>
 
                         <!-- Purok -->
@@ -149,6 +140,13 @@
                                 required
                             >
                                 <option value="">Select Purok...</option>
+                                @if(isset($puroksByBarangay[$userBarangay->name]))
+                                    @foreach($puroksByBarangay[$userBarangay->name] as $purok)
+                                        <option value="{{ $purok }}" {{ old('purok', $youth->purok) === $purok ? 'selected' : '' }}>
+                                            {{ $purok }}
+                                        </option>
+                                    @endforeach
+                                @endif
                             </select>
                             @error('purok')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -472,35 +470,5 @@
             }
         });
 
-        // Purok mapping data
-        const puroksByBarangay = @json($puroksByBarangay);
-
-        // Handle barangay change to populate puroks
-        document.getElementById('barangay').addEventListener('change', function() {
-            const selectedBarangay = this.value;
-            const purokSelect = document.getElementById('purok');
-
-            // Clear existing options
-            purokSelect.innerHTML = '<option value="">Select Purok...</option>';
-
-            // Populate puroks for selected barangay
-            if (selectedBarangay && puroksByBarangay[selectedBarangay]) {
-                puroksByBarangay[selectedBarangay].forEach(function(purok) {
-                    const option = document.createElement('option');
-                    option.value = purok;
-                    option.textContent = purok;
-                    if (purok === "{{ old('purok', $youth->purok) }}") {
-                        option.selected = true;
-                    }
-                    purokSelect.appendChild(option);
-                });
-            }
-        });
-
-        // Trigger change event on page load if barangay is already selected
-        const initialBarangay = document.getElementById('barangay').value;
-        if (initialBarangay) {
-            document.getElementById('barangay').dispatchEvent(new Event('change'));
-        }
     </script>
 @endsection

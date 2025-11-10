@@ -195,13 +195,13 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    @if($youth->barangay_id)
+                                    @if($youth->barangay_id && $youth->barangay)
                                         <a href="{{ route('municipal.barangays.show', $youth->barangay_id) }}"
                                            class="text-blue-600 hover:underline font-medium">
-                                            {{ $youth->barangay()->first()->name ?? 'N/A' }}
+                                            {{ $youth->barangay->name }}
                                         </a>
                                     @else
-                                        <span class="text-gray-500">{{ $youth->getAttributeValue('barangay') ?? 'N/A' }}</span>
+                                        <span class="text-gray-500">N/A</span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4">

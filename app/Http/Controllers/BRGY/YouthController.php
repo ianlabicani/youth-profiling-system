@@ -12,7 +12,7 @@ class YouthController extends Controller
 {
     // 28 Barangays of Camalaniugan
     private $barangays = [
-        'Abbag', 'Aglangan', 'Alilinu', 'Bagu', 'Baringasay',
+        'Abagao', 'Aglangan', 'Alilinu', 'Bagu', 'Baringasay',
         'Bitag Grande', 'Bitag Pequeño', 'Buyon', 'Casili Norte', 'Casili Sur',
         'Catotoran Norte', 'Catotoran Sur', 'Centro Norte (Pob.)', 'Centro Sur (Pob.)', 'Culao',
         'Dacal', 'Dammang', 'Jurisdiction', 'Lavilles', 'Magsaysay',
@@ -22,7 +22,7 @@ class YouthController extends Controller
 
     // Map of puroks for each barangay
     private $puroksByBarangay = [
-        'Abbag' => ['Purok 1', 'Purok 2', 'Purok 3', 'Purok 4'],
+        'Abagao' => ['Purok 1', 'Purok 2', 'Purok 3', 'Purok 4'],
         'Aglangan' => ['Purok 1', 'Purok 2', 'Purok 3', 'Purok 4'],
         'Alilinu' => ['Purok 1', 'Purok 2', 'Purok 3', 'Purok 4', 'Purok 5'],
         'Bagu' => ['Purok 1', 'Purok 2', 'Purok 3'],
@@ -95,8 +95,16 @@ class YouthController extends Controller
      */
     public function create()
     {
+        // Get the barangay of the logged-in user
+        $userBarangay = auth()->user()->barangays()->first();
+
+        if (! $userBarangay) {
+            return redirect()->route('brgy.youth.index')
+                ->withErrors(['error' => 'You are not assigned to any barangay.']);
+        }
+
         return view('brgy.youth.create', [
-            'barangays' => $this->barangays,
+            'userBarangay' => $userBarangay,
             'puroksByBarangay' => $this->puroksByBarangay,
         ]);
     }
@@ -106,6 +114,13 @@ class YouthController extends Controller
      */
     public function store(Request $request)
     {
+        // Get the barangay of the logged-in user
+        $userBarangay = auth()->user()->barangays()->first();
+
+        if (! $userBarangay) {
+            return back()->withErrors(['error' => 'You are not assigned to any barangay.']);
+        }
+
         $validated = $request->validate([
             'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'first_name' => 'required|string|max:255',
@@ -130,7 +145,6 @@ class YouthController extends Controller
             ],
             'sex' => 'required|in:Male,Female,Other',
             'purok' => 'required|string|max:255',
-            'barangay' => 'required|string|max:255',
             'municipality' => 'nullable|string|max:255',
             'province' => 'nullable|string|max:255',
             'latitude' => 'nullable|numeric|between:-90,90',
@@ -162,6 +176,9 @@ class YouthController extends Controller
             }
         }
 
+        // Automatically set the barangay_id from the logged-in user's barangay
+        $validated['barangay_id'] = $userBarangay->id;
+
         try {
             Youth::create($validated);
 
@@ -190,9 +207,23 @@ class YouthController extends Controller
      */
     public function edit(Youth $youth)
     {
+        // Get the barangay of the logged-in user
+        $userBarangay = auth()->user()->barangays()->first();
+
+        if (! $userBarangay) {
+            return redirect()->route('brgy.youth.index')
+                ->withErrors(['error' => 'You are not assigned to any barangay.']);
+        }
+
+        // Ensure the youth belongs to the user's barangay
+        if ($youth->barangay_id !== $userBarangay->id) {
+            return redirect()->route('brgy.youth.index')
+                ->withErrors(['error' => 'You can only edit youth from your barangay.']);
+        }
+
         return view('brgy.youth.edit', [
             'youth' => $youth,
-            'barangays' => $this->barangays,
+            'userBarangay' => $userBarangay,
             'puroksByBarangay' => $this->puroksByBarangay,
         ]);
     }
@@ -202,6 +233,19 @@ class YouthController extends Controller
      */
     public function update(Request $request, Youth $youth)
     {
+        // Get the barangay of the logged-in user
+        $userBarangay = auth()->user()->barangays()->first();
+
+        if (! $userBarangay) {
+            return back()->withErrors(['error' => 'You are not assigned to any barangay.']);
+        }
+
+        // Ensure the youth belongs to the user's barangay
+        if ($youth->barangay_id !== $userBarangay->id) {
+            return redirect()->route('brgy.youth.index')
+                ->withErrors(['error' => 'You can only edit youth from your barangay.']);
+        }
+
         $validated = $request->validate([
             'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'first_name' => 'required|string|max:255',
@@ -226,7 +270,6 @@ class YouthController extends Controller
             ],
             'sex' => 'required|in:Male,Female,Other',
             'purok' => 'required|string|max:255',
-            'barangay' => 'required|string|max:255',
             'municipality' => 'nullable|string|max:255',
             'province' => 'nullable|string|max:255',
             'latitude' => 'nullable|numeric|between:-90,90',

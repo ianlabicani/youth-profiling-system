@@ -23,7 +23,6 @@ class Youth extends Model
         'date_of_birth',
         'sex',
         'purok',
-        'barangay',
         'municipality',
         'province',
         'contact_number',
