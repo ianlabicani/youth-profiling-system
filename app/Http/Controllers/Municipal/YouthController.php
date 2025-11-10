@@ -11,11 +11,11 @@ class YouthController extends Controller
     /**
      * Display a listing of youths for a barangay.
      */
-    public function index(Barangay $barangay)
+    public function index()
     {
-        $youths = $barangay->youths()->paginate(15);
+        $youths = Youth::paginate(15);
 
-        return view('municipal.youths.index', compact('barangay', 'youths'));
+        return view('municipal.youths.index', compact('youths'));
     }
 
     /**

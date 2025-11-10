@@ -84,7 +84,7 @@
                                 </td>
                                 <td class="px-6 py-4 text-sm">
                                     <div class="flex gap-2">
-                                        <a href="{{ route('municipal.dashboard', $youth) }}"
+                                        <a href="{{ route('municipal.youths.show', $youth) }}"
                                            class="text-blue-600 hover:text-blue-900 transition">
                                             <i class="fas fa-eye"></i>
                                         </a>
