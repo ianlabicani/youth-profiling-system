@@ -247,11 +247,6 @@
                                             <i class="fas fa-eye"></i>
                                             View
                                         </a>
-                                        <a href="{{ route('municipal.youths.edit', $youth) }}"
-                                           class="inline-flex items-center gap-1 px-3 py-1 text-sm rounded bg-yellow-50 text-yellow-600 hover:bg-yellow-100 transition">
-                                            <i class="fas fa-edit"></i>
-                                            Edit
-                                        </a>
                                     </div>
                                 </td>
                             </tr>
