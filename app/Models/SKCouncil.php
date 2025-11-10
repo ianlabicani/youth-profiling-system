@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SKCouncil extends Model
 {
+    protected $table = 'sk_councils';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -14,6 +16,7 @@ class SKCouncil extends Model
      */
     protected $fillable = [
         'barangay_id',
+        'term',
         'chairperson_id',
         'secretary_id',
         'treasurer_id',

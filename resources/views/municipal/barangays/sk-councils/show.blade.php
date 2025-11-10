@@ -62,7 +62,7 @@
                             <p class="text-xs text-gray-600">Purok</p>
                             <p class="text-sm text-gray-800">{{ $skCouncil->chairperson->purok ?? 'N/A' }}</p>
                         </div>
-                        <a href="{{ route('municipal.youths.show', $skCouncil->chairperson) }}"
+                        <a href="{{ route('municipal.dashboard', $skCouncil->chairperson) }}"
                            class="inline-flex items-center text-xs text-blue-600 hover:text-blue-700 mt-2">
                             <i class="fas fa-external-link-alt mr-1"></i>View Profile
                         </a>

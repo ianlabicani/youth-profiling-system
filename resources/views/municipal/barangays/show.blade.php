@@ -109,7 +109,7 @@
         </a>
 
         <!-- SK Council Card -->
-        <a href="{{ route('municipal.barangays.sk-councils', $barangay) }}" class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
+        <a href="{{ route('municipal.barangays.sk-councils.index', $barangay) }}" class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
             <div class="flex items-center gap-4">
                 <div class="bg-purple-100 rounded-lg p-3">
                     <i class="fas fa-crown text-purple-600 text-xl"></i>

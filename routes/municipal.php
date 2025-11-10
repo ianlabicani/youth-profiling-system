@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Municipal\AccountController;
 use App\Http\Controllers\Municipal\BarangayController;
+use App\Http\Controllers\Municipal\YouthController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->prefix('municipal')->name('municipal.')->group(function () {
@@ -15,8 +16,10 @@ Route::middleware(['auth', 'verified'])->prefix('municipal')->name('municipal.')
 
     // Barangays Management Routes
     Route::resource('barangays', BarangayController::class);
+    Route::resource('youths', YouthController::class);
 
     // Youths Management Routes (shallow nested under barangays)
     Route::get('barangays/{barangay}/youths', [BarangayController::class, 'youths'])->name('barangays.youths');
-    Route::get('barangays/{barangay}/sk-councils', [BarangayController::class, 'skCouncils'])->name('barangays.sk-councils');
+    Route::get('barangays/{barangay}/sk-councils', [BarangayController::class, 'skCouncils'])->name('barangays.sk-councils.index');
+    Route::get('barangays/{barangay}/sk-councils/{skCouncil}', [BarangayController::class, 'skCouncilsShow'])->name('barangays.sk-councils.show');
 });
