@@ -16,7 +16,7 @@ Route::middleware(['auth', 'verified'])->prefix('municipal')->name('municipal.')
 
     // Barangays Management Routes
     Route::resource('barangays', BarangayController::class);
-    Route::resource('youths', YouthController::class);
+    Route::resource('youths', YouthController::class)->only(['index', 'show']);
 
     // Youths Management Routes (shallow nested under barangays)
     Route::get('barangays/{barangay}/youths', [BarangayController::class, 'youths'])->name('barangays.youths');
