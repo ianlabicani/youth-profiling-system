@@ -214,13 +214,22 @@
 
                     <!-- Search Input -->
                     <div class="p-4 border-b">
-                        <input
-                            type="text"
-                            id="youthSearchInput"
-                            placeholder="Search by name..."
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            autocomplete="off"
-                        >
+                        <div class="flex gap-2">
+                            <input
+                                type="text"
+                                id="youthSearchInput"
+                                placeholder="Search by name..."
+                                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                autocomplete="off"
+                            >
+                            <button
+                                type="button"
+                                onclick="searchYouth()"
+                                class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition"
+                            >
+                                <i class="fas fa-search mr-2"></i>Search
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Results -->
@@ -228,7 +237,7 @@
                         <div id="searchResults" class="space-y-2">
                             <div class="text-center text-gray-400 py-8">
                                 <i class="fas fa-search text-4xl mb-2"></i>
-                                <p>Start typing to search for youth members</p>
+                                <p>Enter a name and click Search to find youth members</p>
                             </div>
                         </div>
                     </div>
@@ -247,7 +256,14 @@
             document.getElementById('searchModal').classList.remove('hidden');
             document.getElementById('youthSearchInput').value = '';
             document.getElementById('youthSearchInput').focus();
-            searchYouth('');
+            // Reset to initial state
+            const resultsDiv = document.getElementById('searchResults');
+            resultsDiv.innerHTML = `
+                <div class="text-center text-gray-400 py-8">
+                    <i class="fas fa-search text-4xl mb-2"></i>
+                    <p>Enter a name and click Search to find youth members</p>
+                </div>
+            `;
         }
 
         // Close search modal
@@ -273,49 +289,47 @@
         }
 
         // Search youth members
-        let searchTimeout = null;
-        async function searchYouth(query) {
-            clearTimeout(searchTimeout);
+        async function searchYouth() {
+            const query = document.getElementById('youthSearchInput').value.trim();
+            const resultsDiv = document.getElementById('searchResults');
 
-            searchTimeout = setTimeout(async () => {
-                const resultsDiv = document.getElementById('searchResults');
-                resultsDiv.innerHTML = '<div class="text-center py-4"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
+            // Show loading state
+            resultsDiv.innerHTML = '<div class="text-center py-4"><i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i></div>';
 
-                try {
-                    const excludedIds = getExcludedIds();
-                    const response = await fetch(`{{ route('brgy.sk-councils.search-youth') }}?search=${encodeURIComponent(query)}&exclude=${excludedIds.join(',')}`);
-                    const youths = await response.json();
+            try {
+                const excludedIds = getExcludedIds();
+                const response = await fetch(`{{ route('brgy.sk-councils.search-youth') }}?search=${encodeURIComponent(query)}&exclude=${excludedIds.join(',')}`);
+                const youths = await response.json();
 
-                    if (youths.length === 0) {
-                        resultsDiv.innerHTML = `
-                            <div class="text-center text-gray-400 py-8">
-                                <i class="fas fa-user-slash text-4xl mb-2"></i>
-                                <p>No youth members found</p>
-                            </div>
-                        `;
-                        return;
-                    }
-
-                    resultsDiv.innerHTML = youths.map(youth => `
-                        <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer" onclick="selectYouth(${youth.id}, '${youth.name.replace(/'/g, "\\'")}')">
-                            <div>
-                                <p class="font-medium text-gray-800">${youth.name}</p>
-                                ${youth.purok ? `<p class="text-sm text-gray-600">Purok ${youth.purok}</p>` : ''}
-                            </div>
-                            <button type="button" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
-                                Select
-                            </button>
-                        </div>
-                    `).join('');
-                } catch (error) {
+                if (youths.length === 0) {
                     resultsDiv.innerHTML = `
-                        <div class="text-center text-red-500 py-8">
-                            <i class="fas fa-exclamation-circle text-4xl mb-2"></i>
-                            <p>Error loading results</p>
+                        <div class="text-center text-gray-400 py-8">
+                            <i class="fas fa-user-slash text-4xl mb-2"></i>
+                            <p>No youth members found${query ? ' matching "' + query + '"' : ''}</p>
                         </div>
                     `;
+                    return;
                 }
-            }, 300);
+
+                resultsDiv.innerHTML = youths.map(youth => `
+                    <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer" onclick="selectYouth(${youth.id}, '${youth.name.replace(/'/g, "\\'")}')">
+                        <div>
+                            <p class="font-medium text-gray-800">${youth.name}</p>
+                            ${youth.purok ? `<p class="text-sm text-gray-600">Purok ${youth.purok}</p>` : ''}
+                        </div>
+                        <button type="button" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
+                            Select
+                        </button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="text-center text-red-500 py-8">
+                        <i class="fas fa-exclamation-circle text-4xl mb-2"></i>
+                        <p>Error loading results</p>
+                    </div>
+                `;
+            }
         }
 
         // Select youth member
@@ -373,11 +387,18 @@
             `).join('');
         }
 
-        // Setup search input listener
+        // Setup event listeners
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('youthSearchInput');
+
+            // Allow Enter key to trigger search
             if (searchInput) {
-                searchInput.addEventListener('input', (e) => searchYouth(e.target.value));
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        searchYouth();
+                    }
+                });
             }
 
             // Close modal on escape key
