@@ -2,6 +2,11 @@
 
 @section('municipal-content')
 <div class="space-y-6">
+    <!-- Header -->
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-800">Youth Management</h1>
+        <p class="text-gray-600 mt-2">View and manage all youth profiles across all barangays</p>
+    </div>
 
     <!-- Alert Messages -->
     @if ($message = session('success'))
@@ -16,6 +21,139 @@
         </div>
     @endif
 
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Total Youths</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ $youths->total() }}</p>
+                </div>
+                <div class="p-3 bg-blue-100 rounded-full">
+                    <i class="fas fa-users text-xl text-blue-600"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Active</p>
+                    <p class="text-2xl font-bold text-green-600">{{ $youths->where('status', 'active')->count() }}</p>
+                </div>
+                <div class="p-3 bg-green-100 rounded-full">
+                    <i class="fas fa-check-circle text-xl text-green-600"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">SK Members</p>
+                    <p class="text-2xl font-bold text-purple-600">{{ $youths->where('is_sk_member', true)->count() }}</p>
+                </div>
+                <div class="p-3 bg-purple-100 rounded-full">
+                    <i class="fas fa-star text-xl text-purple-600"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Archived</p>
+                    <p class="text-2xl font-bold text-red-600">{{ $youths->where('status', 'archived')->count() }}</p>
+                </div>
+                <div class="p-3 bg-red-100 rounded-full">
+                    <i class="fas fa-archive text-xl text-red-600"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Card -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-filter mr-2 text-blue-600"></i>Filters
+        </h2>
+
+        <form method="GET" action="{{ route('municipal.youths.index') }}" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                <!-- Search Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
+                    <input
+                        type="text"
+                        name="search"
+                        placeholder="Name, email, phone..."
+                        value="{{ request('search') }}"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                </div>
+
+                <!-- Barangay Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Barangay</label>
+                    <select name="barangay_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">All Barangays</option>
+                        @foreach(\App\Models\Barangay::orderBy('name')->get() as $barangay)
+                            <option value="{{ $barangay->id }}" {{ request('barangay_id') == $barangay->id ? 'selected' : '' }}>
+                                {{ $barangay->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Status Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                    <select name="status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">All Statuses</option>
+                        <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
+                        <option value="archived" {{ request('status') === 'archived' ? 'selected' : '' }}>Archived</option>
+                    </select>
+                </div>
+
+                <!-- Sex Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Sex</label>
+                    <select name="sex" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">All</option>
+                        <option value="Male" {{ request('sex') === 'Male' ? 'selected' : '' }}>Male</option>
+                        <option value="Female" {{ request('sex') === 'Female' ? 'selected' : '' }}>Female</option>
+                        <option value="Other" {{ request('sex') === 'Other' ? 'selected' : '' }}>Other</option>
+                    </select>
+                </div>
+
+                <!-- SK Member Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">SK Member</label>
+                    <select name="is_sk_member" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">All</option>
+                        <option value="1" {{ request('is_sk_member') === '1' ? 'selected' : '' }}>Yes</option>
+                        <option value="0" {{ request('is_sk_member') === '0' ? 'selected' : '' }}>No</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="flex gap-2">
+                <button type="submit" class="inline-flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
+                    <i class="fas fa-search mr-2"></i>Apply Filters
+                </button>
+                <a href="{{ route('municipal.youths.index') }}" class="inline-flex items-center px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition font-medium">
+                    <i class="fas fa-redo mr-2"></i>Reset
+                </a>
+                <div class="ml-auto flex gap-2">
+                    <button type="button" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium">
+                        <i class="fas fa-file-excel mr-2"></i>Export
+                    </button>
+                    <button type="button" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium">
+                        <i class="fas fa-print mr-2"></i>Print
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
     <!-- Youths Table -->
     <div class="bg-white rounded-lg shadow overflow-hidden">
         @if($youths->count() > 0)
@@ -23,9 +161,11 @@
                 <table class="w-full">
                     <thead class="bg-gray-50 border-b">
                         <tr>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">ID</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Name</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Barangay</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Contact</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Purok</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Sex</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Status</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">SK Member</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Actions</th>
@@ -34,6 +174,9 @@
                     <tbody class="divide-y">
                         @foreach($youths as $youth)
                             <tr class="hover:bg-gray-50 transition">
+                                <td class="px-6 py-4">
+                                    <span class="font-mono text-sm text-blue-600 font-semibold">#{{ $youth->id }}</span>
+                                </td>
                                 <td class="px-6 py-4">
                                     <div>
                                         <p class="font-medium text-gray-900">
@@ -46,26 +189,41 @@
                                                 {{ $youth->suffix }}
                                             @endif
                                         </p>
-                                        <p class="text-sm text-gray-500">ID: {{ $youth->id }}</p>
+                                        <p class="text-xs text-gray-500">
+                                            {{ $youth->educational_attainment ?? 'N/A' }}
+                                        </p>
                                     </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    @if($youth->barangay_id)
+                                        <a href="{{ route('municipal.barangays.show', $youth->barangay_id) }}"
+                                           class="text-blue-600 hover:underline font-medium">
+                                            {{ $youth->barangay()->first()->name ?? 'N/A' }}
+                                        </a>
+                                    @else
+                                        <span class="text-gray-500">{{ $youth->getAttributeValue('barangay') ?? 'N/A' }}</span>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="text-sm text-gray-600">
                                         @if($youth->contact_number)
-                                            <p>{{ $youth->contact_number }}</p>
+                                            <p><i class="fas fa-phone text-xs mr-1"></i>{{ $youth->contact_number }}</p>
                                         @endif
                                         @if($youth->email)
-                                            <p class="text-xs text-gray-500">{{ $youth->email }}</p>
+                                            <p class="text-xs text-gray-500"><i class="fas fa-envelope text-xs mr-1"></i>{{ $youth->email }}</p>
+                                        @endif
+                                        @if(!$youth->contact_number && !$youth->email)
+                                            <span class="text-gray-400">N/A</span>
                                         @endif
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-600">
-                                    {{ $youth->purok ?? '-' }}
+                                    {{ $youth->sex ?? 'N/A' }}
                                 </td>
                                 <td class="px-6 py-4 text-sm">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                         @if($youth->status === 'active') bg-green-100 text-green-800
-                                        @elseif($youth->status === 'inactive') bg-red-100 text-red-800
+                                        @elseif($youth->status === 'archived') bg-red-100 text-red-800
                                         @else bg-gray-100 text-gray-800
                                         @endif">
                                         {{ ucfirst($youth->status ?? 'unknown') }}
@@ -74,7 +232,7 @@
                                 <td class="px-6 py-4 text-sm">
                                     @if($youth->is_sk_member)
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                                            <i class="fas fa-check-circle mr-1"></i>Yes
+                                            <i class="fas fa-star mr-1"></i>Yes
                                         </span>
                                     @else
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
@@ -83,10 +241,16 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-sm">
-                                    <div class="flex gap-2">
+                                    <div class="flex items-center gap-2">
                                         <a href="{{ route('municipal.youths.show', $youth) }}"
-                                           class="text-blue-600 hover:text-blue-900 transition">
+                                           class="inline-flex items-center gap-1 px-3 py-1 text-sm rounded bg-blue-50 text-blue-600 hover:bg-blue-100 transition">
                                             <i class="fas fa-eye"></i>
+                                            View
+                                        </a>
+                                        <a href="{{ route('municipal.youths.edit', $youth) }}"
+                                           class="inline-flex items-center gap-1 px-3 py-1 text-sm rounded bg-yellow-50 text-yellow-600 hover:bg-yellow-100 transition">
+                                            <i class="fas fa-edit"></i>
+                                            Edit
                                         </a>
                                     </div>
                                 </td>
@@ -104,9 +268,16 @@
             @endif
         @else
             <div class="px-6 py-12 text-center">
-                <i class="fas fa-inbox text-4xl text-gray-400 mb-4"></i>
-                <p class="text-gray-500 text-lg font-medium">No youths found</p>
-                <p class="text-gray-400 mt-2">There are no youth records yet</p>
+                <i class="fas fa-users-slash text-5xl text-gray-300 mb-4"></i>
+                <p class="text-gray-600 text-lg font-medium mb-2">No youth records found</p>
+                <p class="text-gray-400">
+                    @if(request()->hasAny(['search', 'barangay_id', 'status', 'sex', 'is_sk_member']))
+                        Try adjusting your filters or
+                        <a href="{{ route('municipal.youths.index') }}" class="text-blue-600 hover:underline font-medium">reset all filters</a>
+                    @else
+                        There are no youth records in the system yet
+                    @endif
+                </p>
             </div>
         @endif
     </div>

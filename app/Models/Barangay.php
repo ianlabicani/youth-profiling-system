@@ -32,9 +32,4 @@ class Barangay extends Model
     {
         return $this->hasMany(SKCouncil::class);
     }
-
-    public function getNameAttribute(): string
-    {
-        return $this->name;
-    }
 }
