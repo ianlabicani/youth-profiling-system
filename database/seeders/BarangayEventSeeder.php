@@ -6,6 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\BarangayEvent;
 use App\Models\Barangay;
+use App\Models\SKCouncil;
 
 class BarangayEventSeeder extends Seeder
 {
@@ -55,11 +56,15 @@ class BarangayEventSeeder extends Seeder
         ];
 
         foreach ($barangays as $barangay) {
+            // Get the SK Council for this barangay
+            $skCouncil = SKCouncil::where('barangay_id', $barangay->id)->where('is_active', true)->first();
+
             foreach ($eventTemplates as $key => $template) {
                 $daysToAdd = ($key + 1) * 7;
 
                 BarangayEvent::create([
                     'barangay_id' => $barangay->id,
+                    'sk_council_id' => $skCouncil?->id,
                     'title' => $template['title'],
                     'date' => now()->addDays($daysToAdd)->toDateString(),
                     'time' => $template['time'],

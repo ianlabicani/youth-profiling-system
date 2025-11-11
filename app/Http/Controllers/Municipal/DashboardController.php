@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Municipal;
 
 use App\Http\Controllers\Controller;
 use App\Models\BarangayEvent;
+use App\Models\Organization;
 use App\Models\SKCouncil;
 use App\Models\Youth;
-use App\Models\Organization;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
@@ -15,8 +15,8 @@ class DashboardController extends Controller
     public function index()
     {
         // Cache key and TTL (seconds)
-        $cacheKey = "municipal_dashboard";
-        $ttl = 300; // 5 minutes
+        $cacheKey = 'municipal_dashboard';
+        $ttl = 120; // 2 minutes
 
         $data = Cache::remember($cacheKey, $ttl, function () {
             // KPIs - Municipality-wide
