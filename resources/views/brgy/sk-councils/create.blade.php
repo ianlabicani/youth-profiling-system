@@ -156,11 +156,11 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-users text-indigo-600 mr-1"></i>Kagawad (Council Members)
                         </label>
-                        <p class="text-sm text-gray-600 mb-3">Add council members one by one</p>
+                        <p class="text-sm text-gray-600 mb-3">Add council members one by one (Max 7)</p>
 
                         <div id="kagawad_list" class="space-y-2 mb-3"></div>
 
-                        <button type="button" onclick="openSearchModal('kagawad')" class="w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                        <button type="button" id="addKagawadBtn" onclick="openSearchModal('kagawad')" class="w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
                             <i class="fas fa-plus mr-2"></i>Add Kagawad
                         </button>
                         <p class="text-xs text-gray-500 mt-1">Optional: You can assign kagawad members now or later</p>
@@ -355,6 +355,10 @@
 
         // Add kagawad
         function addKagawad(id, name) {
+            if (selectedKagawad.length >= 7) {
+                alert('Maximum of 7 kagawad members allowed');
+                return;
+            }
             selectedKagawad.push({ id, name });
             renderKagawadList();
         }
@@ -368,9 +372,11 @@
         // Render kagawad list
         function renderKagawadList() {
             const listDiv = document.getElementById('kagawad_list');
+            const addBtn = document.getElementById('addKagawadBtn');
 
             if (selectedKagawad.length === 0) {
                 listDiv.innerHTML = '<p class="text-gray-400 text-sm">No kagawad members assigned yet</p>';
+                addBtn.disabled = false;
                 return;
             }
 
@@ -385,6 +391,9 @@
                     </button>
                 </div>
             `).join('');
+
+            // Disable button if limit reached
+            addBtn.disabled = selectedKagawad.length >= 7;
         }
 
         // Setup event listeners

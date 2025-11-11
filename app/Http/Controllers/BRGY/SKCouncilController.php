@@ -72,13 +72,17 @@ class SKCouncilController extends Controller
         }
 
         $search = $request->input('search', '');
-        $excludeIds = $request->input('exclude', []);
+        $excludeIds = $request->input('exclude', '');
 
         $query = Youth::where('barangay_id', $userBarangay->id)
             ->where('status', 'active');
 
+        // Parse exclude IDs from comma-separated string
         if (! empty($excludeIds)) {
-            $query->whereNotIn('id', $excludeIds);
+            $excludeIdsArray = array_filter(array_map('trim', explode(',', $excludeIds)));
+            if (! empty($excludeIdsArray)) {
+                $query->whereNotIn('id', $excludeIdsArray);
+            }
         }
 
         if (! empty($search)) {
@@ -134,7 +138,7 @@ class SKCouncilController extends Controller
             'chairperson_id' => 'required|exists:youths,id',
             'secretary_id' => 'nullable|exists:youths,id',
             'treasurer_id' => 'nullable|exists:youths,id',
-            'kagawad_ids' => 'nullable|array',
+            'kagawad_ids' => 'nullable|array|max:7',
             'kagawad_ids.*' => 'exists:youths,id',
             'is_active' => 'nullable|boolean',
         ]);
@@ -245,7 +249,7 @@ class SKCouncilController extends Controller
             'chairperson_id' => 'required|exists:youths,id',
             'secretary_id' => 'nullable|exists:youths,id',
             'treasurer_id' => 'nullable|exists:youths,id',
-            'kagawad_ids' => 'nullable|array',
+            'kagawad_ids' => 'nullable|array|max:7',
             'kagawad_ids.*' => 'exists:youths,id',
             'is_active' => 'nullable|boolean',
         ]);

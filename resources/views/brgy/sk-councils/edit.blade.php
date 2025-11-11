@@ -8,9 +8,9 @@
                 <a href="{{ route('brgy.sk-councils.index') }}" class="text-blue-600 hover:text-blue-700">
                     <i class="fas fa-arrow-left text-lg"></i>
                 </a>
-                <h1 class="text-3xl font-bold text-gray-800">Create SK Council</h1>
+                <h1 class="text-3xl font-bold text-gray-800">Edit SK Council</h1>
             </div>
-            <p class="text-gray-600 ml-10">Create a new Sangguniang Kabataan council for {{ $userBarangay->name }}</p>
+            <p class="text-gray-600 ml-10">Edit the Sangguniang Kabataan council for {{ $userBarangay->name }}</p>
         </div>
 
         <!-- Error Messages -->
@@ -49,8 +49,9 @@
         @else
             <!-- Form Card -->
             <div class="bg-white rounded-lg shadow-md p-6">
-                <form action="{{ route('brgy.sk-councils.update', $skCouncil) }}" method="PATCH" class="space-y-6">
+                <form action="{{ route('brgy.sk-councils.update', $skCouncil) }}" method="POST" class="space-y-6">
                     @csrf
+                    @method('PATCH')
 
                     <!-- Barangay (Read-only) -->
                     <div class="border-b pb-6">
@@ -97,7 +98,7 @@
                                 <input type="hidden" name="chairperson_id" id="chairperson_id" value="{{ $skCouncil->chairperson_id }}">
                                 <div class="flex gap-2">
                                     <div class="flex-1 px-4 py-2 border @error('chairperson_id') border-red-500 @else border-gray-300 @enderror rounded-lg bg-gray-50" id="chairperson_display">
-                                        <span class="text-gray-400" id="chairperson_text">{{ $skCouncil->chairperson->name ?? 'No chairperson assigned' }}</span>
+                                        <span class="text-gray-800" id="chairperson_text">{{ $skCouncil->chairperson->name ?? 'No chairperson assigned' }}</span>
                                     </div>
                                     <button type="button" onclick="openSearchModal('chairperson')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                                         <i class="fas fa-search"></i> Assign
@@ -119,7 +120,7 @@
                                 <input type="hidden" name="secretary_id" id="secretary_id" value="{{ $skCouncil->secretary_id }}">
                                 <div class="flex gap-2">
                                     <div class="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50" id="secretary_display">
-                                        <span class="text-gray-400" id="secretary_text">No secretary assigned</span>
+                                        <span class="text-gray-800" id="secretary_text">{{ $skCouncil->secretary->name ?? 'No secretary assigned' }}</span>
                                     </div>
                                     <button type="button" onclick="openSearchModal('secretary')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                                         <i class="fas fa-search"></i> Assign
@@ -138,7 +139,7 @@
                                 <input type="hidden" name="treasurer_id" id="treasurer_id" value="{{ $skCouncil->treasurer_id }}">
                                 <div class="flex gap-2">
                                     <div class="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50" id="treasurer_display">
-                                        <span class="text-gray-400" id="treasurer_text">No treasurer assigned</span>
+                                        <span class="text-gray-800" id="treasurer_text">{{ $skCouncil->treasurer->name ?? 'No treasurer assigned' }}</span>
                                     </div>
                                     <button type="button" onclick="openSearchModal('treasurer')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                                         <i class="fas fa-search"></i> Assign
@@ -156,11 +157,11 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-users text-indigo-600 mr-1"></i>Kagawad (Council Members)
                         </label>
-                        <p class="text-sm text-gray-600 mb-3">Add council members one by one</p>
+                        <p class="text-sm text-gray-600 mb-3">Add council members one by one (Max 7)</p>
 
                         <div id="kagawad_list" class="space-y-2 mb-3"></div>
 
-                        <button type="button" onclick="openSearchModal('kagawad')" class="w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                        <button type="button" id="addKagawadBtn" onclick="openSearchModal('kagawad')" class="w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
                             <i class="fas fa-plus mr-2"></i>Add Kagawad
                         </button>
                         <p class="text-xs text-gray-500 mt-1">Optional: You can assign kagawad members now or later</p>
@@ -172,7 +173,7 @@
                             type="submit"
                             class="flex-1 px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
                         >
-                            <i class="fas fa-save mr-2"></i>Create SK Council
+                            <i class="fas fa-save mr-2"></i>Update SK Council
                         </button>
                         <a
                             href="{{ route('brgy.sk-councils.index') }}"
@@ -355,6 +356,10 @@
 
         // Add kagawad
         function addKagawad(id, name) {
+            if (selectedKagawad.length >= 7) {
+                alert('Maximum of 7 kagawad members allowed');
+                return;
+            }
             selectedKagawad.push({ id, name });
             renderKagawadList();
         }
@@ -368,9 +373,11 @@
         // Render kagawad list
         function renderKagawadList() {
             const listDiv = document.getElementById('kagawad_list');
+            const addBtn = document.getElementById('addKagawadBtn');
 
             if (selectedKagawad.length === 0) {
                 listDiv.innerHTML = '<p class="text-gray-400 text-sm">No kagawad members assigned yet</p>';
+                addBtn.disabled = false;
                 return;
             }
 
@@ -385,6 +392,9 @@
                     </button>
                 </div>
             `).join('');
+
+            // Disable button if limit reached
+            addBtn.disabled = selectedKagawad.length >= 7;
         }
 
         // Setup event listeners
@@ -411,8 +421,20 @@
                 if (e.target.id === 'searchModal') closeSearchModal();
             });
 
-            // Initialize kagawad list
-            renderKagawadList();
+            // Initialize kagawad list from existing data
+            const kagawadIds = {!! json_encode($skCouncil->kagawad_ids ?? []) !!};
+            if (kagawadIds && kagawadIds.length > 0) {
+                // Fetch names of existing kagawad members
+                fetch(`{{ route('brgy.sk-councils.search-youth') }}?exclude=${kagawadIds.join(',')}`)
+                    .then(r => r.json())
+                    .then(youths => {
+                        const existingKagawad = youths.filter(y => kagawadIds.includes(y.id));
+                        selectedKagawad = existingKagawad.map(k => ({ id: k.id, name: k.name }));
+                        renderKagawadList();
+                    });
+            } else {
+                renderKagawadList();
+            }
         });
     </script>
 @endsection

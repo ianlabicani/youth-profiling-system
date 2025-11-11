@@ -32,14 +32,6 @@
                     <i class="fas fa-users mr-3"></i>SK Councils
                 </a>
 
-                <a href="/brgy/organizations" class="flex items-center px-4 py-2 {{ request()->is('brgy/organizations*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">
-                    <i class="fas fa-users mr-3"></i>Organizations
-                </a>
-
-                <a href="/brgy/events" class="flex items-center px-4 py-2 {{ request()->is('brgy/events*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">
-                    <i class="fas fa-calendar-alt mr-3"></i>Event Management
-                </a>
-
 
             </nav>
 
