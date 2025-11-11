@@ -105,7 +105,7 @@
                                 <input type="hidden" name="chairperson_id" id="chairperson_id" value="{{ $skCouncil->chairperson_id }}">
                                 <div class="flex gap-2">
                                     <div class="flex-1 px-4 py-2 border @error('chairperson_id') border-red-500 @else border-gray-300 @enderror rounded-lg bg-gray-50" id="chairperson_display">
-                                        <span class="text-gray-800" id="chairperson_text">{{ $skCouncil->chairperson->name ?? 'No chairperson assigned' }}</span>
+                                        <span class="@if($skCouncil->chairperson) text-gray-800 @else text-gray-400 @endif" id="chairperson_text">{{ $skCouncil->chairperson->name ?? 'No chairperson assigned' }}</span>
                                     </div>
                                     <button type="button" onclick="openSearchModal('chairperson')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                                         <i class="fas fa-search"></i> Assign
@@ -127,7 +127,7 @@
                                 <input type="hidden" name="secretary_id" id="secretary_id" value="{{ $skCouncil->secretary_id }}">
                                 <div class="flex gap-2">
                                     <div class="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50" id="secretary_display">
-                                        <span class="text-gray-800" id="secretary_text">{{ $skCouncil->secretary->name ?? 'No secretary assigned' }}</span>
+                                        <span class="@if($skCouncil->secretary) text-gray-800 @else text-gray-400 @endif" id="secretary_text">{{ $skCouncil->secretary->name ?? 'No secretary assigned' }}</span>
                                     </div>
                                     <button type="button" onclick="openSearchModal('secretary')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                                         <i class="fas fa-search"></i> Assign
@@ -146,7 +146,7 @@
                                 <input type="hidden" name="treasurer_id" id="treasurer_id" value="{{ $skCouncil->treasurer_id }}">
                                 <div class="flex gap-2">
                                     <div class="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50" id="treasurer_display">
-                                        <span class="text-gray-800" id="treasurer_text">{{ $skCouncil->treasurer->name ?? 'No treasurer assigned' }}</span>
+                                        <span class="@if($skCouncil->treasurer) text-gray-800 @else text-gray-400 @endif" id="treasurer_text">{{ $skCouncil->treasurer->name ?? 'No treasurer assigned' }}</span>
                                     </div>
                                     <button type="button" onclick="openSearchModal('treasurer')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                                         <i class="fas fa-search"></i> Assign
@@ -357,8 +357,8 @@
         function clearSelection(position) {
             document.getElementById(`${position}_id`).value = '';
             document.getElementById(`${position}_text`).textContent = `No ${position} assigned`;
-            document.getElementById(`${position}_text`).classList.add('text-gray-400');
             document.getElementById(`${position}_text`).classList.remove('text-gray-800');
+            document.getElementById(`${position}_text`).classList.add('text-gray-400');
         }
 
         // Add kagawad
@@ -429,19 +429,9 @@
             });
 
             // Initialize kagawad list from existing data
-            const kagawadIds = {!! json_encode($skCouncil->kagawad_ids ?? []) !!};
-            if (kagawadIds && kagawadIds.length > 0) {
-                // Fetch names of existing kagawad members
-                fetch(`{{ route('brgy.sk-councils.search-youth') }}?exclude=${kagawadIds.join(',')}`)
-                    .then(r => r.json())
-                    .then(youths => {
-                        const existingKagawad = youths.filter(y => kagawadIds.includes(y.id));
-                        selectedKagawad = existingKagawad.map(k => ({ id: k.id, name: k.name }));
-                        renderKagawadList();
-                    });
-            } else {
-                renderKagawadList();
-            }
+            const kagawadData = {!! json_encode($skCouncil->kagawads()->map(function($y) { return ['id' => $y->id, 'name' => $y->first_name . ($y->middle_name ? ' ' . substr($y->middle_name, 0, 1) . '.' : '') . ' ' . $y->last_name]; })->toArray()) !!};
+            selectedKagawad = kagawadData;
+            renderKagawadList();
         });
     </script>
 @endsection
