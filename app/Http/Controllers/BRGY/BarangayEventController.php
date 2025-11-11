@@ -5,8 +5,8 @@ namespace App\Http\Controllers\BRGY;
 use App\Http\Controllers\Controller;
 use App\Models\BarangayEvent;
 use App\Models\SKCouncil;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class BarangayEventController extends Controller
 {
@@ -67,7 +67,7 @@ class BarangayEventController extends Controller
             }
 
             // As a fallback try flexible parse
-            if (!$time) {
+            if (! $time) {
                 try {
                     $time = Carbon::parse($timeInput);
                 } catch (\Exception $e) {
@@ -75,7 +75,7 @@ class BarangayEventController extends Controller
                 }
             }
 
-            if (!$time) {
+            if (! $time) {
                 return back()->withErrors(['time' => 'The time field must be a valid time (e.g., 08:00 or 08:00 AM)'])->withInput();
             }
 
@@ -158,7 +158,7 @@ class BarangayEventController extends Controller
             }
 
             // As a fallback try flexible parse
-            if (!$time) {
+            if (! $time) {
                 try {
                     $time = Carbon::parse($timeInput);
                 } catch (\Exception $e) {
@@ -166,7 +166,7 @@ class BarangayEventController extends Controller
                 }
             }
 
-            if (!$time) {
+            if (! $time) {
                 return back()->withErrors(['time' => 'The time field must be a valid time (e.g., 08:00 or 08:00 AM)'])->withInput();
             }
 
