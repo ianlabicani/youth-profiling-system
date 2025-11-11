@@ -90,6 +90,13 @@ class BarangayController extends Controller
         return view('municipal.barangays.youths.index', compact('barangay', 'youths'));
     }
 
+    public function youthShow(Barangay $barangay, $id)
+    {
+        $youth = $barangay->youths()->where('id', $id)->firstOrFail();
+
+        return view('municipal.barangays.youths.show', compact('barangay', 'youth'));
+    }
+
     public function skCouncils(Barangay $barangay)
     {
         $skCouncils = $barangay->skCouncils()->paginate(15);

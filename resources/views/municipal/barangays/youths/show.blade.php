@@ -13,12 +13,6 @@
                 <p class="text-gray-600 mt-1">View detailed information about this youth</p>
             </div>
         </div>
-        <div class="flex gap-3">
-            <a href="{{ route('municipal.youths.edit', $youth) }}"
-               class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
-                <i class="fas fa-edit mr-2"></i>Edit Profile
-            </a>
-        </div>
     </div>
 
     <!-- Alert Messages -->
@@ -354,21 +348,7 @@
            class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium">
             <i class="fas fa-arrow-left mr-2"></i>Back to Youth List
         </a>
-        <div class="flex gap-3">
-            <a href="{{ route('municipal.youths.edit', $youth) }}"
-               class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
-                <i class="fas fa-edit mr-2"></i>Edit Profile
-            </a>
-            <form method="POST" action="{{ route('municipal.youths.destroy', $youth) }}"
-                  onsubmit="return confirm('Are you sure you want to delete this youth record? This action cannot be undone.');">
-                @csrf
-                @method('DELETE')
-                <button type="submit"
-                        class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium">
-                    <i class="fas fa-trash mr-2"></i>Delete Record
-                </button>
-            </form>
-        </div>
+
     </div>
 </div>
 
