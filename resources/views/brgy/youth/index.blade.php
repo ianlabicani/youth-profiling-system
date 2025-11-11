@@ -85,6 +85,7 @@
                     <table class="w-full text-sm">
                         <thead class="bg-gray-100 border-b">
                             <tr>
+                                <th class="px-6 py-3 text-left font-semibold text-gray-700">Photo</th>
                                 <th class="px-6 py-3 text-left font-semibold text-gray-700">ID</th>
                                 <th class="px-6 py-3 text-left font-semibold text-gray-700">Name</th>
                                 <th class="px-6 py-3 text-left font-semibold text-gray-700">Email</th>
@@ -97,6 +98,15 @@
                         <tbody class="divide-y">
                             @foreach($youths as $youth)
                                 <tr class="hover:bg-gray-50 transition">
+                                    <td class="px-6 py-3">
+                                        @if($youth->photo)
+                                            <img src="{{ asset('storage/'.$youth->photo) }}" alt="Photo" class="w-10 h-10 rounded-full object-cover">
+                                        @else
+                                            <div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
+                                                <i class="fas fa-user text-gray-600"></i>
+                                            </div>
+                                        @endif
+                                    </td>
                                     <td class="px-6 py-3">
                                         <span class="font-mono text-sm text-blue-600">#{{ $youth->id }}</span>
                                     </td>

@@ -27,8 +27,45 @@
 
         <!-- Form Card -->
         <div class="bg-white rounded-lg shadow-md p-6">
-            <form action="{{ route('brgy.youth.store') }}" method="POST" class="space-y-6">
+            <form action="{{ route('brgy.youth.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
+
+                <!-- Photo Upload Section -->
+                <div class="border-b pb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Photo</h3>
+                    <div class="flex gap-6">
+                        <!-- Photo Preview -->
+                        <div class="flex-shrink-0">
+                            <div id="photoPreview" class="w-32 h-40 bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300 overflow-hidden">
+                                <i class="fas fa-image text-3xl text-gray-400"></i>
+                            </div>
+                        </div>
+                        <!-- Upload Options -->
+                        <div class="flex-1">
+                            <div class="space-y-4">
+                                <!-- File Upload -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Upload Photo</label>
+                                    <input
+                                        type="file"
+                                        id="photoInput"
+                                        name="photo"
+                                        accept="image/*"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    >
+                                    <p class="text-sm text-gray-500 mt-1">Supported formats: JPG, PNG (Max: 2MB)</p>
+                                    @error('photo')
+                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <!-- Clear Button -->
+                                <button type="button" onclick="clearPhoto()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">
+                                    <i class="fas fa-trash mr-2"></i>Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Name Section -->
                 <div class="border-b pb-6">
@@ -393,5 +430,24 @@
             }
         }
 
+    </script>
+
+    <!-- Photo Upload Handler -->
+    <script>
+        document.getElementById('photoInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('photoPreview').innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function clearPhoto() {
+            document.getElementById('photoInput').value = '';
+            document.getElementById('photoPreview').innerHTML = '<i class="fas fa-image text-3xl text-gray-400"></i>';
+        }
     </script>
 @endsection

@@ -57,6 +57,8 @@ class YouthController extends Controller
      */
     public function index(Request $request)
     {
+        $userBarangay = auth()->user()->barangays()->first();
+
         $query = Youth::query();
 
         // Search filter
@@ -82,6 +84,11 @@ class YouthController extends Controller
         // Educational attainment filter
         if ($request->filled('educational_attainment')) {
             $query->where('educational_attainment', $request->input('educational_attainment'));
+        }
+
+        // Barangay filter - restrict to user's barangay
+        if ($userBarangay) {
+            $query->where('barangay_id', $userBarangay->id);
         }
 
         // Pagination
@@ -121,6 +128,12 @@ class YouthController extends Controller
             return back()->withErrors(['error' => 'You are not assigned to any barangay.']);
         }
 
+        // Build email validation rule dynamically
+        $emailRule = 'nullable|email|max:255';
+        if ($request->filled('email')) {
+            $emailRule .= '|unique:youths,email';
+        }
+
         $validated = $request->validate([
             'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'first_name' => 'required|string|max:255',
@@ -150,7 +163,7 @@ class YouthController extends Controller
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
             'contact_number' => 'required|string|max:20',
-            'email' => 'nullable|email|max:255|unique:youths,email',
+            'email' => $emailRule,
             'educational_attainment' => 'nullable|string|max:255',
             'skills' => 'nullable|string',
             'status' => 'nullable|in:active,archived',
@@ -246,6 +259,12 @@ class YouthController extends Controller
                 ->withErrors(['error' => 'You can only edit youth from your barangay.']);
         }
 
+        // Build email validation rule dynamically
+        $emailRule = 'nullable|email|max:255';
+        if ($request->filled('email') && $request->input('email') !== $youth->email) {
+            $emailRule .= '|unique:youths,email';
+        }
+
         $validated = $request->validate([
             'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'first_name' => 'required|string|max:255',
@@ -275,7 +294,7 @@ class YouthController extends Controller
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
             'contact_number' => 'required|string|max:20',
-            'email' => 'nullable|email|max:255|unique:youths,email,'.$youth->id,
+            'email' => $emailRule,
             'educational_attainment' => 'nullable|string|max:255',
             'skills' => 'nullable|string',
             'status' => 'nullable|in:active,archived',

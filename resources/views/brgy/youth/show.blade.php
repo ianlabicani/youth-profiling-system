@@ -34,6 +34,15 @@
 
             <!-- Content Section -->
             <div class="p-6 space-y-6">
+                <!-- Photo Display -->
+                @if($youth->photo)
+                    <div class="flex justify-center mb-6">
+                        <div class="w-48 h-64 rounded-lg overflow-hidden shadow-lg border-4 border-gray-200">
+                            <img src="{{ asset('storage/'.$youth->photo) }}" alt="Youth Photo" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                @endif
+
                 <!-- Personal Information -->
                 <div class="border-b pb-6">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Personal Information</h3>
