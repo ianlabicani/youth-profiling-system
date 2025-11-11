@@ -22,6 +22,11 @@ Route::get('/organizations/{organization}', [\App\Http\Controllers\Public\Organi
 Route::get('/councils', [\App\Http\Controllers\Public\CouncilController::class, 'index'])->name('public.councils.index');
 Route::get('/councils/{skCouncil}', [\App\Http\Controllers\Public\CouncilController::class, 'show'])->name('public.councils.show');
 
+// Public Pages
+Route::get('/features', [\App\Http\Controllers\Public\PageController::class, 'features'])->name('features');
+Route::get('/contact', [\App\Http\Controllers\Public\PageController::class, 'contact'])->name('contact');
+Route::post('/contact', [\App\Http\Controllers\Public\PageController::class, 'submitContact'])->name('contact.submit');
+
 Route::get('/dashboard', function () {
 
     $user = auth()->user();
