@@ -96,4 +96,11 @@ class BarangayController extends Controller
 
         return view('municipal.barangays.sk-councils.index', compact('barangay', 'skCouncils'));
     }
+
+    public function skCouncilShow(Barangay $barangay, $id)
+    {
+        $skCouncil = $barangay->skCouncils()->where('id', $id)->firstOrFail();
+
+        return view('municipal.barangays.sk-councils.show', compact('barangay', 'skCouncil'));
+    }
 }

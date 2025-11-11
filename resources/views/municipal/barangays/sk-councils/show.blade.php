@@ -4,12 +4,19 @@
 <div class="space-y-6">
     <!-- Header -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-4">
             <a href="{{ route('municipal.barangays.sk-councils.index', $barangay) }}" class="text-blue-600 hover:text-blue-700">
                 <i class="fas fa-arrow-left text-lg"></i>
             </a>
             <div>
-                <h1 class="text-3xl font-bold text-gray-800">SK Council #{{ $skCouncil->id }}</h1>
+                <div class="flex items-center gap-3">
+                    <h1 class="text-3xl font-bold text-gray-800">SK Council #{{ $skCouncil->id }}</h1>
+                    @if(!empty($skCouncil->is_active) && $skCouncil->is_active)
+                        <span class="inline-flex items-center px-2 py-0.5 text-sm font-semibold bg-green-100 text-green-800 rounded-full">
+                            <i class="fas fa-check mr-1 text-xs"></i>Active
+                        </span>
+                    @endif
+                </div>
                 <p class="text-gray-600 mt-1">Sangguniang Kabataan Council Details</p>
             </div>
         </div>

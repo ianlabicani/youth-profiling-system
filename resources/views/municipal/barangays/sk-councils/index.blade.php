@@ -36,7 +36,14 @@
                     <!-- Header -->
                     <div class="flex items-start justify-between mb-4">
                         <div>
-                            <h3 class="text-lg font-bold text-gray-800">SK Council #{{ $council->id }}</h3>
+                            <div class="flex items-center gap-3">
+                                <h3 class="text-lg font-bold text-gray-800">SK Council #{{ $council->id }}</h3>
+                                @if(!empty($council->is_active) && $council->is_active)
+                                    <span class="inline-flex items-center px-2 py-0.5 text-xs font-semibold bg-green-100 text-green-800 rounded-full">
+                                        <i class="fas fa-check mr-1 text-xs"></i>Active
+                                    </span>
+                                @endif
+                            </div>
                             <p class="text-sm text-gray-500 mt-1">{{ $council->created_at->format('M d, Y') }}</p>
                         </div>
                         <div class="text-purple-600">
