@@ -28,7 +28,74 @@
         </div>
     @endif
 
-    <!-- Youths Table -->
+    <!-- Filters Card -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-filter mr-2 text-blue-600"></i>Filters
+        </h2>
+
+        <form method="GET" action="{{ route('municipal.barangays.youths', $barangay) }}" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Search Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
+                    <input
+                        type="text"
+                        name="search"
+                        placeholder="Name, email, phone..."
+                        value="{{ request('search') }}"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                </div>
+
+                <!-- Status Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                    <select name="status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">All Statuses</option>
+                        <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
+                        <option value="archived" {{ request('status') === 'archived' ? 'selected' : '' }}>Archived</option>
+                    </select>
+                </div>
+
+                <!-- Sex Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Sex</label>
+                    <select name="sex" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">All</option>
+                        <option value="Male" {{ request('sex') === 'Male' ? 'selected' : '' }}>Male</option>
+                        <option value="Female" {{ request('sex') === 'Female' ? 'selected' : '' }}>Female</option>
+                        <option value="Other" {{ request('sex') === 'Other' ? 'selected' : '' }}>Other</option>
+                    </select>
+                </div>
+
+                <!-- Purok Filter -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Purok</label>
+                    <select name="purok" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">All Puroks</option>
+                        @foreach($barangay->youths()->distinct('purok')->pluck('purok')->sort() as $purok)
+                            @if($purok)
+                                <option value="{{ $purok }}" {{ request('purok') === $purok ? 'selected' : '' }}>
+                                    {{ $purok }}
+                                </option>
+                            @endif
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="flex gap-2">
+                <button type="submit" class="inline-flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
+                    <i class="fas fa-search mr-2"></i>Apply Filters
+                </button>
+                <a href="{{ route('municipal.barangays.youths', $barangay) }}" class="inline-flex items-center px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition font-medium">
+                    <i class="fas fa-redo mr-2"></i>Reset
+                </a>
+            </div>
+        </form>
+    </div>
     <div class="bg-white rounded-lg shadow overflow-hidden">
         @if($youths->count() > 0)
             <div class="overflow-x-auto">

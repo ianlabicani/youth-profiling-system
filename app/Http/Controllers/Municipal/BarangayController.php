@@ -85,7 +85,33 @@ class BarangayController extends Controller
 
     public function youths(Barangay $barangay)
     {
-        $youths = $barangay->youths()->paginate(15);
+        $query = $barangay->youths();
+
+        // Apply search filter
+        if ($search = request('search')) {
+            $query->where(function($q) use ($search) {
+                $q->whereRaw("CONCAT(first_name, ' ', COALESCE(middle_name, ''), ' ', last_name) LIKE ?", ["%{$search}%"])
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('contact_number', 'like', "%{$search}%");
+            });
+        }
+
+        // Apply status filter
+        if ($status = request('status')) {
+            $query->where('status', $status);
+        }
+
+        // Apply sex filter
+        if ($sex = request('sex')) {
+            $query->where('sex', $sex);
+        }
+
+        // Apply purok filter
+        if ($purok = request('purok')) {
+            $query->where('purok', $purok);
+        }
+
+        $youths = $query->paginate(15);
 
         return view('municipal.barangays.youths.index', compact('barangay', 'youths'));
     }
