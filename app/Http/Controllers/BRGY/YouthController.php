@@ -342,7 +342,9 @@ class YouthController extends Controller
      */
     public function heatmap()
     {
-        $youths = Youth::all();
+
+        $userBarangay = auth()->user()->barangays()->first();
+        $youths = Youth::where('barangay_id', $userBarangay->id)->get();
 
         return view('brgy.youth.heatmap', ['youths' => $youths]);
     }
