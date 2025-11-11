@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BRGY\BarangayEventController;
 use App\Http\Controllers\BRGY\SKCouncilController;
 use App\Http\Controllers\BRGY\YouthController;
 use Illuminate\Support\Facades\Route;
@@ -20,5 +21,8 @@ Route::middleware(['auth', 'verified'])->prefix('brgy')->name('brgy.')->group(fu
     Route::resource('sk-councils', SKCouncilController::class);
     Route::get('sk-councils/search/youth', [SKCouncilController::class, 'searchYouth'])->name('sk-councils.search-youth');
     Route::post('sk-councils/{skCouncil}/activate', [SKCouncilController::class, 'activate'])->name('sk-councils.activate');
+
+    // Barangay Events Management Routes
+    Route::resource('events', BarangayEventController::class);
 
 });

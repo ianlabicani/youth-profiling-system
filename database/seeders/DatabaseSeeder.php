@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             BarangaySeeder::class,
             YouthSeeder::class,
+            BarangayEventSeeder::class,
         ]);
 
     }
