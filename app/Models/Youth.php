@@ -50,6 +50,11 @@ class Youth extends Model
         return $this->first_name.', '.$this->last_name;
     }
 
+    public function getFullNameAttribute()
+    {
+        return $this->first_name.' '.($this->middle_name ? substr($this->middle_name, 0, 1).'. ' : '').$this->last_name;
+    }
+
     /**
      * Get the barangay that this youth belongs to.
      */

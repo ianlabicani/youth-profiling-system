@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Organization extends Model
 {
     protected $fillable = [
+        'name',
         'president_id',
         'vice_president_id',
         'secretary_id',

@@ -101,4 +101,14 @@ class EventController extends Controller
 
         return compact('upcomingEvents', 'todayEvents', 'pastEvents');
     }
+
+    /**
+     * Display a single event with full details
+     */
+    public function show(BarangayEvent $event)
+    {
+        $event->load('skCouncil', 'barangay');
+
+        return view('public.events.show', compact('event'));
+    }
 }

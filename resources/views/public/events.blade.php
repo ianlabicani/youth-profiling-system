@@ -114,10 +114,10 @@
                 <!-- Events Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
                     @foreach($events as $event)
-                        <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition overflow-hidden border-l-4 border-blue-600">
+                        <a href="{{ route('public.events.show', $event) }}" class="bg-white rounded-lg shadow-md hover:shadow-lg transition overflow-hidden border-l-4 border-blue-600 group">
                             <!-- Event Header -->
                             <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
-                                <h3 class="text-xl font-bold text-white line-clamp-2">{{ $event->title }}</h3>
+                                <h3 class="text-xl font-bold text-white line-clamp-2 group-hover:line-clamp-none">{{ $event->title }}</h3>
                             </div>
 
                             <!-- Event Content -->
@@ -165,7 +165,7 @@
                                     <div>
                                         <p class="text-sm font-medium text-gray-600">Barangay</p>
                                         <p class="text-gray-900 font-semibold">
-                                            {{ $event->skCouncil?->barangay?->name ?? 'Barangay TBA' }}
+                                            {{ $event->barangay?->name ?? 'Barangay TBA' }}
                                         </p>
                                     </div>
                                 </div>
@@ -192,8 +192,9 @@
                                         <span class="text-gray-500">{{ $event->date->diffForHumans() }}</span>
                                     @endif
                                 </span>
+                                <i class="fas fa-arrow-right text-blue-600 group-hover:translate-x-1 transition"></i>
                             </div>
-                        </div>
+                        </a>
                     @endforeach
                 </div>
 

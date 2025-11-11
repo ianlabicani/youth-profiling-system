@@ -12,6 +12,15 @@ Route::get('/', function () {
 
 // Public Events
 Route::get('/events', [\App\Http\Controllers\Public\EventController::class, 'index'])->name('public.events.index');
+Route::get('/events/{event}', [\App\Http\Controllers\Public\EventController::class, 'show'])->name('public.events.show');
+
+// Public Organizations
+Route::get('/organizations', [\App\Http\Controllers\Public\OrganizationController::class, 'index'])->name('public.organizations.index');
+Route::get('/organizations/{organization}', [\App\Http\Controllers\Public\OrganizationController::class, 'show'])->name('public.organizations.show');
+
+// Public Councils
+Route::get('/councils', [\App\Http\Controllers\Public\CouncilController::class, 'index'])->name('public.councils.index');
+Route::get('/councils/{skCouncil}', [\App\Http\Controllers\Public\CouncilController::class, 'show'])->name('public.councils.show');
 
 Route::get('/dashboard', function () {
 

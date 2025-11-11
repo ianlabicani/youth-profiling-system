@@ -63,7 +63,7 @@
                         <!-- Header -->
                         <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4 flex justify-between items-center">
                             <div>
-                                <h2 class="text-xl font-bold text-white">Organization {{ $loop->iteration }}</h2>
+                                <h2 class="text-xl font-bold text-white">{{ $org->name ?? "Organization #" . $org->id }}</h2>
                                 @if($org->barangay)
                                     <p class="text-blue-100 text-sm">{{ $org->barangay->name }}</p>
                                 @endif

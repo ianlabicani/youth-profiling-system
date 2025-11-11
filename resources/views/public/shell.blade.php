@@ -12,6 +12,8 @@
             <nav class="hidden md:flex items-center gap-8 text-gray-600 font-medium">
                 <a href="{{ route('welcome') }}" class="hover:text-blue-600 transition">Home</a>
                 <a href="{{ route('public.events.index') }}" class="hover:text-blue-600 transition">Events</a>
+                <a href="{{ route('public.organizations.index') }}" class="hover:text-blue-600 transition">Organizations</a>
+                <a href="{{ route('public.councils.index') }}" class="hover:text-blue-600 transition">Councils</a>
                 <a href="#features" class="hover:text-blue-600 transition">Features</a>
                 <a href="#contact" class="hover:text-blue-600 transition">Contact</a>
             </nav>

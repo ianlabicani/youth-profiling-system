@@ -32,7 +32,7 @@
             <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-6">
                 <div class="flex justify-between items-start">
                     <div class="text-white">
-                        <h2 class="text-2xl font-bold mb-1">Organization</h2>
+                        <h2 class="text-2xl font-bold mb-1">{{ $organization->name ?? "Organization #" . $organization->id }}</h2>
                         @if($organization->barangay)
                             <p class="text-blue-100">{{ $organization->barangay->name }}</p>
                         @endif

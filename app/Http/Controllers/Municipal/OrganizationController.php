@@ -90,6 +90,7 @@ class OrganizationController extends Controller
     {
         // validate the simple scalar fields first
         $data = $request->validate([
+            'name' => 'nullable|string|max:255',
             'president_id' => 'nullable|exists:youths,id',
             'vice_president_id' => 'nullable|exists:youths,id',
             'secretary_id' => 'nullable|exists:youths,id',
@@ -179,6 +180,7 @@ class OrganizationController extends Controller
     public function update(Request $request, Organization $organization)
     {
         $data = $request->validate([
+            'name' => 'nullable|string|max:255',
             'president_id' => 'nullable|exists:youths,id',
             'vice_president_id' => 'nullable|exists:youths,id',
             'secretary_id' => 'nullable|exists:youths,id',
