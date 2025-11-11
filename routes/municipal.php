@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth', 'verified'])->prefix('municipal')->name('municipal.')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/heatmap', [DashboardController::class, 'heatmap'])->name('heatmap');
 
     // Accounts Management Routes
     Route::resource('accounts', AccountController::class);

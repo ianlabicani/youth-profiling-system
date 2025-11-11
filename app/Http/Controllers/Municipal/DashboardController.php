@@ -156,4 +156,15 @@ class DashboardController extends Controller
 
         return view('municipal.dashboard', $data);
     }
+
+    public function heatmap()
+    {
+        $youths = Youth::whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->where('latitude', '!=', 0)
+            ->where('longitude', '!=', 0)
+            ->get();
+
+        return view('municipal.heatmap', compact('youths'));
+    }
 }
