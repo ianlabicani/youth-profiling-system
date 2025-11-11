@@ -2,21 +2,21 @@
 
 use App\Http\Controllers\Municipal\AccountController;
 use App\Http\Controllers\Municipal\BarangayController;
+use App\Http\Controllers\Municipal\DashboardController;
 use App\Http\Controllers\Municipal\OrganizationController;
 use App\Http\Controllers\Municipal\YouthController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->prefix('municipal')->name('municipal.')->group(function () {
 
-    Route::get('/dashboard', function () {
-        return view('municipal.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Accounts Management Routes
     Route::resource('accounts', AccountController::class);
 
     // Barangays Management Routes
     Route::resource('barangays', BarangayController::class);
+    Route::get('youths/out-of-school', [YouthController::class, 'outOfSchool'])->name('youths.out-of-school');
     Route::resource('youths', YouthController::class)->only(['index', 'show']);
 
     // Organizations CRUD - custom routes first (before resource to avoid conflict)

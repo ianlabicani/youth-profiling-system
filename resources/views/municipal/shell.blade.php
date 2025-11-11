@@ -29,8 +29,12 @@
                 <a href="{{ route('municipal.barangays.index') }}" class="flex items-center px-4 py-2 {{ request()->is('municipal/barangays*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">
                     <i class="fas fa-map-pin mr-3"></i>Barangays
                 </a>
-                <a href="{{ route('municipal.youths.index') }}" class="flex items-center px-4 py-2 {{ request()->is('municipal/youths*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">
+                <a href="{{ route('municipal.youths.index') }}" class="flex items-center px-4 py-2 {{ request()->is('municipal/youths*') && !request()->is('municipal/youths/out-of-school*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">
                     <i class="fas fa-users mr-3"></i>Youth
+                </a>
+
+                <a href="{{ route('municipal.youths.out-of-school') }}" class="flex items-center px-4 py-2 {{ request()->is('municipal/youths/out-of-school*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">
+                    <i class="fas fa-graduation-cap mr-3"></i>Out of School
                 </a>
 
                 <a href="{{ route('municipal.organizations.index') }}" class="flex items-center px-4 py-2 {{ request()->is('municipal/organizations*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">
