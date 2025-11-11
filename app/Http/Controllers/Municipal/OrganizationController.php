@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Municipal;
 
 use App\Http\Controllers\Controller;
-use App\Models\Barangay;
 use App\Models\Organization;
 use App\Models\Youth;
 use Illuminate\Http\Request;
@@ -13,7 +12,7 @@ class OrganizationController extends Controller
     /** Display a listing of organizations. */
     public function index()
     {
-        $organizations = Organization::with('barangay')->paginate(15);
+        $organizations = Organization::paginate(15);
 
         return view('municipal.organizations.index', compact('organizations'));
     }
@@ -21,10 +20,7 @@ class OrganizationController extends Controller
     /** Show the form for creating a new organization. */
     public function create()
     {
-        $youths = Youth::orderBy('last_name')->get();
-        $barangays = Barangay::orderBy('name')->get();
-
-        return view('municipal.organizations.create', compact('youths', 'barangays'));
+        return view('municipal.organizations.create');
     }
 
     /** Search for youth members (AJAX endpoint) */
@@ -157,7 +153,7 @@ class OrganizationController extends Controller
     public function show(Organization $organization)
     {
         // eager load relations
-        $organization->load(['president', 'vicePresident', 'secretary', 'treasurer', 'barangay']);
+        $organization->load(['president', 'vicePresident', 'secretary', 'treasurer']);
         // fetch members and committee heads youths for display
         $memberIds = $organization->members ?? [];
         $members = $memberIds ? Youth::whereIn('id', $memberIds)->get() : collect();
@@ -175,9 +171,8 @@ class OrganizationController extends Controller
     public function edit(Organization $organization)
     {
         $youths = Youth::orderBy('last_name')->get();
-        $barangays = Barangay::orderBy('name')->get();
 
-        return view('municipal.organizations.edit', compact('organization', 'youths', 'barangays'));
+        return view('municipal.organizations.edit', compact('organization', 'youths'));
     }
 
     /** Update the specified organization in storage. */

@@ -4,8 +4,14 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    $eventController = new \App\Http\Controllers\Public\EventController;
+    $data = $eventController->featured();
+
+    return view('public.welcome', $data);
+})->name('welcome');
+
+// Public Events
+Route::get('/events', [\App\Http\Controllers\Public\EventController::class, 'index'])->name('public.events.index');
 
 Route::get('/dashboard', function () {
 
@@ -19,7 +25,7 @@ Route::get('/dashboard', function () {
     }
 
     // Default fallback if no specific role
-    return view('dashboard');
+    return view('public.welcome');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

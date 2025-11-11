@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Organization extends Model
 {
     protected $fillable = [
-        'barangay_id',
         'president_id',
         'vice_president_id',
         'secretary_id',
@@ -22,11 +21,6 @@ class Organization extends Model
         'committee_heads' => 'array',
         'members' => 'array',
     ];
-
-    public function barangay(): BelongsTo
-    {
-        return $this->belongsTo(Barangay::class);
-    }
 
     public function president(): BelongsTo
     {

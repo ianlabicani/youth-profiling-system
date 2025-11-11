@@ -91,7 +91,7 @@
                                         <label class="text-sm font-semibold text-blue-800 uppercase">President</label>
                                     </div>
                                     @if($org->president)
-                                        <a href="{{ route('municipal.youth.show', $org->president) }}"
+                                        <a href="{{ route('municipal.youths.show', $org->president) }}"
                                            class="text-gray-900 font-medium hover:text-blue-600 transition">
                                             {{ $org->president->first_name }}
                                             @if($org->president->middle_name)
@@ -111,7 +111,7 @@
                                         <label class="text-sm font-semibold text-purple-800 uppercase">Vice Pres.</label>
                                     </div>
                                     @if($org->vicePresident)
-                                        <a href="{{ route('municipal.youth.show', $org->vicePresident) }}"
+                                        <a href="{{ route('municipal.youths.show', $org->vicePresident) }}"
                                            class="text-gray-900 font-medium hover:text-blue-600 transition">
                                             {{ $org->vicePresident->first_name }}
                                             @if($org->vicePresident->middle_name)
@@ -131,7 +131,7 @@
                                         <label class="text-sm font-semibold text-green-800 uppercase">Secretary</label>
                                     </div>
                                     @if($org->secretary)
-                                        <a href="{{ route('municipal.youth.show', $org->secretary) }}"
+                                        <a href="{{ route('municipal.youths.show', $org->secretary) }}"
                                            class="text-gray-900 font-medium hover:text-blue-600 transition">
                                             {{ $org->secretary->first_name }}
                                             @if($org->secretary->middle_name)
@@ -151,7 +151,7 @@
                                         <label class="text-sm font-semibold text-orange-800 uppercase">Treasurer</label>
                                     </div>
                                     @if($org->treasurer)
-                                        <a href="{{ route('municipal.youth.show', $org->treasurer) }}"
+                                        <a href="{{ route('municipal.youths.show', $org->treasurer) }}"
                                            class="text-gray-900 font-medium hover:text-blue-600 transition">
                                             {{ $org->treasurer->first_name }}
                                             @if($org->treasurer->middle_name)
