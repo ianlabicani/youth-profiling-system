@@ -13,6 +13,29 @@
             </a>
         </div>
 
+        <!-- Filter Card -->
+        <div class="bg-white rounded-lg shadow-md p-4 mb-4">
+            <form method="GET" action="{{ route('municipal.heatmap') }}" class="flex items-end gap-4">
+                <div class="flex-1">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Barangay</label>
+                    <select name="barangay_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">All Barangays</option>
+                        @foreach($barangays as $barangay)
+                            <option value="{{ $barangay->id }}" {{ request('barangay_id') == $barangay->id ? 'selected' : '' }}>
+                                {{ $barangay->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <button type="submit" class="inline-flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
+                    <i class="fas fa-search mr-2"></i>Filter
+                </button>
+                <a href="{{ route('municipal.heatmap') }}" class="inline-flex items-center px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition font-medium">
+                    <i class="fas fa-redo mr-2"></i>Reset
+                </a>
+            </form>
+        </div>
+
         <!-- Map Container -->
         <div id="heatmap" class="flex-1 rounded-lg shadow-md border border-gray-200"></div>
 
@@ -43,8 +66,8 @@
     </style>
 
     <script>
-        // Initialize map
-        const map = L.map('heatmap').setView([17.2667, 121.7500], 11);
+        // Initialize map centered on Camalaniugan town center
+        const map = L.map('heatmap').setView([18.2753372, 121.6967438], 13);
 
         // Add base layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

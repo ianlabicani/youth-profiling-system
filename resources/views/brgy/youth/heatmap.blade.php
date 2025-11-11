@@ -40,8 +40,8 @@
     </style>
 
     <script>
-        // Initialize map
-        const map = L.map('heatmap').setView([18.2675306, 121.6844299], 12);
+        // Initialize map centered on Camalaniugan town center
+        const map = L.map('heatmap').setView([18.2753372, 121.6967438], 13);
 
         // Add base layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

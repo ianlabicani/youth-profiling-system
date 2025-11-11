@@ -159,12 +159,21 @@ class DashboardController extends Controller
 
     public function heatmap()
     {
-        $youths = Youth::whereNotNull('latitude')
+        $query = Youth::whereNotNull('latitude')
             ->whereNotNull('longitude')
             ->where('latitude', '!=', 0)
-            ->where('longitude', '!=', 0)
-            ->get();
+            ->where('longitude', '!=', 0);
 
-        return view('municipal.heatmap', compact('youths'));
+        // Filter by barangay if specified
+        if ($barangayId = request('barangay_id')) {
+            $query->where('barangay_id', $barangayId);
+        }
+
+        $youths = $query->get();
+
+        // Get all barangays for filter dropdown
+        $barangays = \App\Models\Barangay::orderBy('name')->get();
+
+        return view('municipal.heatmap', compact('youths', 'barangays'));
     }
 }
