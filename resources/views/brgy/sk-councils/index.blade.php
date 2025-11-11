@@ -37,6 +37,15 @@
             </div>
         @endif
 
+        <!-- Create Button -->
+        <div class="mb-6">
+            <a href="{{ route('brgy.sk-councils.create') }}"
+               class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
+                <i class="fas fa-plus-circle"></i>
+                <span>Create SK Council</span>
+            </a>
+        </div>
+
         @if($skCouncils->isEmpty())
             <!-- No SK Council Yet -->
             <div class="bg-white rounded-lg shadow-md p-12 text-center">
@@ -45,11 +54,6 @@
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-2">No SK Council Yet</h3>
                 <p class="text-gray-600 mb-6">You haven't created an SK Council for your barangay yet.</p>
-                <a href="{{ route('brgy.sk-councils.create') }}"
-                   class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>Create SK Council</span>
-                </a>
             </div>
         @else
             <!-- SK Council Card -->

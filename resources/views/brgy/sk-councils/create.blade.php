@@ -69,14 +69,21 @@
 
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Term *</label>
-                                <input
-                                    type="text"
+                                <select
                                     name="term"
-                                    value="{{ old('term') }}"
-                                    placeholder="e.g., 2023-2026"
                                     class="w-full px-4 py-2 border @error('term') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     required
                                 >
+                                    <option value="">-- Select Term --</option>
+                                    <option value="1992-1996" @selected(old('term') === '1992-1996')>1992-1996</option>
+                                    <option value="1997-2002" @selected(old('term') === '1997-2002')>1997-2002</option>
+                                    <option value="2002-2007" @selected(old('term') === '2002-2007')>2002-2007</option>
+                                    <option value="2007-2010" @selected(old('term') === '2007-2010')>2007-2010</option>
+                                    <option value="2010-2013" @selected(old('term') === '2010-2013')>2010-2013</option>
+                                    <option value="2013-2018" @selected(old('term') === '2013-2018')>2013-2018</option>
+                                    <option value="2018-2023" @selected(old('term') === '2018-2023')>2018-2023</option>
+                                    <option value="2023-2027" @selected(old('term') === '2023-2027')>2023-2027</option>
+                                </select>
                                 @error('term')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror

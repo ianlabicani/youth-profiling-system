@@ -125,14 +125,6 @@ class SKCouncilController extends Controller
             return back()->withErrors(['error' => 'You are not assigned to any barangay.']);
         }
 
-        // Check if an active council already exists
-        $existingActiveCouncil = SKCouncil::where('barangay_id', $userBarangay->id)
-            ->where('is_active', true)
-            ->first();
-        if ($existingActiveCouncil) {
-            return back()->withErrors(['error' => 'An active SK Council already exists for your barangay. Please deactivate it first.']);
-        }
-
         $validated = $request->validate([
             'term' => 'required|string|max:255',
             'chairperson_id' => 'required|exists:youths,id',
@@ -143,8 +135,8 @@ class SKCouncilController extends Controller
             'is_active' => 'nullable|boolean',
         ]);
 
-        // Default to active if not specified
-        $validated['is_active'] = $validated['is_active'] ?? true;
+        // Default to inactive
+        $validated['is_active'] = false;
 
         // Ensure all selected youths belong to the user's barangay
         $youthIds = array_filter([
@@ -172,12 +164,6 @@ class SKCouncilController extends Controller
 
         // Set the barangay_id
         $validated['barangay_id'] = $userBarangay->id;
-
-        // If this council is being set as active, deactivate all other councils
-        if (isset($validated['is_active']) && $validated['is_active']) {
-            SKCouncil::where('barangay_id', $userBarangay->id)
-                ->update(['is_active' => false]);
-        }
 
         SKCouncil::create($validated);
 
