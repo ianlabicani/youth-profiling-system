@@ -49,11 +49,7 @@
 
                     <div id="profile-menu" class="hidden absolute bottom-full left-0 w-full bg-white rounded-lg shadow-xl border border-gray-200 mb-2">
                         <div class="py-2">
-                            <a href="/brgy/profile/edit" class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">
-                                <i class="fas fa-user-cog w-5 mr-3 text-blue-600"></i>
-                                <span class="font-medium">Profile Settings</span>
-                            </a>
-                            <div class="border-t border-gray-200 my-2"></div>
+                            <div class="border-gray-200 my-2"></div>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="w-full flex items-center px-4 py-3 text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
