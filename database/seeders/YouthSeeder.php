@@ -83,8 +83,8 @@ class YouthSeeder extends Seeder
                     'email' => strtolower($firstName.'.'.$lastName.'@example.com'),
                     'educational_attainment' => $educationalLevels[array_rand($educationalLevels)],
                     'skills' => $skills[array_rand($skills)],
-                    'latitude' => 18.2753372 + (rand(-1000, 1000) / 10000), // Camalaniugan center: 18.2753372
-                    'longitude' => 121.6967438 + (rand(-1000, 1000) / 10000), // Camalaniugan center: 121.6967438
+                    'latitude' => 18.2753372 + (rand(-300, 300) / 10000), // Camalaniugan center with ±0.03° radius (~3.3km)
+                    'longitude' => 121.6967438 + (rand(-300, 300) / 10000), // Camalaniugan center with ±0.03° radius (~3.3km)
                     'status' => rand(1, 10) <= 8 ? 'active' : 'archived', // 80% active
                     'remarks' => rand(1, 3) === 1 ? 'Seeded youth record for testing' : null,
                 ]);
