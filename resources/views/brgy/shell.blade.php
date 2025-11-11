@@ -6,14 +6,15 @@
     <div id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white shadow-lg z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
         <div class="flex flex-col h-full">
             <!-- Logo -->
-            <div class="flex items-center space-x-2 p-4 border-b">
-                <img src="{{ asset('images/youth-logo.png') }}" alt="Logo" class="h-10 w-10 rounded-full object-cover">
-                <div>
-                    <span class="text-lg font-bold text-gray-800">Barangay Youth Profiling</span>
-                    <p class="text-xs text-gray-600">Barangay Dashboard</p>
+            <a href="{{ route('welcome') }}">
+                <div class="flex items-center space-x-2 p-4 border-b">
+                    <img src="{{ asset('images/youth-logo.png') }}" alt="Logo" class="h-10 w-10 rounded-full object-cover">
+                    <div>
+                        <span class="text-lg font-bold text-gray-800">Barangay Youth Profiling</span>
+                        <p class="text-xs text-gray-600">Barangay Dashboard</p>
+                    </div>
                 </div>
-            </div>
-
+            </a>
             <!-- Nav Items -->
             <nav class="flex-1 px-4 py-4 space-y-2">
                 <a href="{{ route('brgy.dashboard') }}" class="flex items-center px-4 py-2 {{ request()->is('brgy/dashboard') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">

@@ -18,10 +18,20 @@
                 <a href="{{ route('contact') }}" class="hover:text-blue-600 transition">Contact</a>
             </nav>
             <div class="flex items-center gap-3">
-                <a href="{{ route('login') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition">
-                    <i class="fa-solid fa-right-to-bracket"></i>
-                    <span>SK Login</span>
-                </a>
+                @auth
+                    <div class="flex items-center gap-3">
+                        <span class="text-gray-600 font-medium">{{ Auth::user()->name }}</span>
+                        <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition">
+                            <i class="fa-solid fa-gauge"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </div>
+                @else
+                    <a href="{{ route('login') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span>SK Login</span>
+                    </a>
+                @endauth
             </div>
         </div>
     </header>
