@@ -59,9 +59,9 @@ class YouthSeeder extends Seeder
 
         $puroks = ['Purok 1', 'Purok 2', 'Purok 3', 'Purok 4', 'Purok 5', null];
 
-        // Generate 15-25 youths per barangay
+        // Generate exactly 20 youths per barangay
         foreach ($barangays as $barangay) {
-            $count = rand(15, 25);
+            $count = 20;
 
             for ($i = 0; $i < $count; $i++) {
                 $firstName = $firstNames[array_rand($firstNames)];
@@ -77,14 +77,14 @@ class YouthSeeder extends Seeder
                     'date_of_birth' => now()->subYears(rand(15, 30))->subDays(rand(0, 365)),
                     'sex' => ['Male', 'Female', 'Other'][array_rand(['Male', 'Female', 'Other'])],
                     'purok' => $puroks[array_rand($puroks)],
-                    'municipality' => 'Calinog', // Assuming this is the municipality
-                    'province' => 'Iloilo', // Assuming this is the province
+                    'municipality' => 'Camalaniugan',
+                    'province' => 'Cagayan',
                     'contact_number' => '09'.rand(100000000, 999999999),
                     'email' => strtolower($firstName.'.'.$lastName.'@example.com'),
                     'educational_attainment' => $educationalLevels[array_rand($educationalLevels)],
                     'skills' => $skills[array_rand($skills)],
-                    'latitude' => 10.7418 + (rand(-500, 500) / 10000), // Calinog approximate latitude
-                    'longitude' => 122.2157 + (rand(-500, 500) / 10000), // Calinog approximate longitude
+                    'latitude' => 17.2667 + (rand(-500, 500) / 10000), // Camalaniugan approximate latitude
+                    'longitude' => 121.7500 + (rand(-500, 500) / 10000), // Camalaniugan approximate longitude
                     'status' => rand(1, 10) <= 8 ? 'active' : 'archived', // 80% active
                     'remarks' => rand(1, 3) === 1 ? 'Seeded youth record for testing' : null,
                 ]);

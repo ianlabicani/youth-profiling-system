@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('organizations', function (Blueprint $table) {
             $table->id();
+            $table->string('name')->nullable();
             // Key positions
             $table->unsignedBigInteger('president_id')->nullable();
             $table->unsignedBigInteger('vice_president_id')->nullable();

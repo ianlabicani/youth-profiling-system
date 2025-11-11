@@ -59,7 +59,7 @@
                         </div>
                         <p class="text-gray-600">
                             Municipal Government Center<br>
-                            Calinog, Iloilo 5033<br>
+                            Camalaniugan, Cagayan<br>
                             Philippines
                         </p>
                     </div>

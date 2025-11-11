@@ -21,6 +21,8 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             BarangaySeeder::class,
             YouthSeeder::class,
+            OrganizationSeeder::class,
+            SKCouncilSeeder::class,
             BarangayEventSeeder::class,
         ]);
 
