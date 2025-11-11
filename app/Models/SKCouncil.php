@@ -73,4 +73,12 @@ class SKCouncil extends Model
     {
         return Youth::whereIn('id', $this->kagawad_ids ?? [])->get();
     }
+
+    /**
+     * Get the events organized by this SK Council.
+     */
+    public function events()
+    {
+        return $this->hasMany(BarangayEvent::class, 'sk_council_id');
+    }
 }

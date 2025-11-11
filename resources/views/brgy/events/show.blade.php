@@ -68,6 +68,27 @@
                             <p class="text-gray-800">{{ $userBarangay->name }}</p>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-lg">
+                            <p class="text-sm font-semibold text-gray-600 mb-1">SK Council</p>
+                            @if($event->skCouncil)
+                                <div class="flex items-center gap-2">
+                                    <span class="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-semibold">
+                                        {{ $event->skCouncil->term }}
+                                    </span>
+                                    @if($event->skCouncil->is_active)
+                                        <span class="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-semibold">
+                                            <i class="fas fa-check-circle"></i>Active
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-200 text-gray-700 rounded text-xs font-semibold">
+                                            <i class="fas fa-minus-circle"></i>Inactive
+                                        </span>
+                                    @endif
+                                </div>
+                            @else
+                                <p class="text-gray-600 italic">Not assigned to any council</p>
+                            @endif
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
                             <p class="text-sm font-semibold text-gray-600 mb-1">Created</p>
                             <p class="text-gray-800">{{ $event->created_at->format('M d, Y h:i A') }}</p>
                         </div>

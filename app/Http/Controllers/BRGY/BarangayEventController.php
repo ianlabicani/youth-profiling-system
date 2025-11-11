@@ -4,7 +4,9 @@ namespace App\Http\Controllers\BRGY;
 
 use App\Http\Controllers\Controller;
 use App\Models\BarangayEvent;
+use App\Models\SKCouncil;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class BarangayEventController extends Controller
 {
@@ -15,6 +17,7 @@ class BarangayEventController extends Controller
     {
         $userBarangay = auth()->user()->barangays()->first();
         $events = BarangayEvent::where('barangay_id', $userBarangay->id)
+            ->with('skCouncil')
             ->orderBy('date', 'desc')
             ->paginate(10);
 
@@ -27,8 +30,9 @@ class BarangayEventController extends Controller
     public function create()
     {
         $userBarangay = auth()->user()->barangays()->first();
+        $skCouncils = SKCouncil::where('barangay_id', $userBarangay->id)->get();
 
-        return view('brgy.events.create', compact('userBarangay'));
+        return view('brgy.events.create', compact('userBarangay', 'skCouncils'));
     }
 
     /**
@@ -41,11 +45,43 @@ class BarangayEventController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'date' => 'required|date|after_or_equal:today',
-            'time' => 'required|date_format:H:i',
+            'time' => 'required|string', // parsed below to accept multiple formats
             'venue' => 'required|string|max:255',
             'organizer' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'sk_council_id' => 'nullable|exists:sk_councils,id',
         ]);
+
+        // Normalize time input to H:i:s (DB time column)
+        $timeInput = $validated['time'] ?? null;
+        $time = null;
+        if ($timeInput) {
+            $formats = ['H:i', 'H:i:s', 'g:i A', 'h:i A', 'g:i a', 'h:i a'];
+            foreach ($formats as $fmt) {
+                try {
+                    $time = Carbon::createFromFormat($fmt, $timeInput);
+                    break;
+                } catch (\Exception $e) {
+                    // try next
+                }
+            }
+
+            // As a fallback try flexible parse
+            if (!$time) {
+                try {
+                    $time = Carbon::parse($timeInput);
+                } catch (\Exception $e) {
+                    // invalid time
+                }
+            }
+
+            if (!$time) {
+                return back()->withErrors(['time' => 'The time field must be a valid time (e.g., 08:00 or 08:00 AM)'])->withInput();
+            }
+
+            // store as H:i:s
+            $validated['time'] = $time->format('H:i:s');
+        }
 
         $validated['barangay_id'] = $userBarangay->id;
 
@@ -81,7 +117,9 @@ class BarangayEventController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        return view('brgy.events.edit', compact('event', 'userBarangay'));
+        $skCouncils = SKCouncil::where('barangay_id', $userBarangay->id)->get();
+
+        return view('brgy.events.edit', compact('event', 'userBarangay', 'skCouncils'));
     }
 
     /**
@@ -98,11 +136,43 @@ class BarangayEventController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'date' => 'required|date|after_or_equal:today',
-            'time' => 'required|date_format:H:i',
+            'time' => 'required|string', // parsed below to accept multiple formats
             'venue' => 'required|string|max:255',
             'organizer' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'sk_council_id' => 'nullable|exists:sk_councils,id',
         ]);
+
+        // Normalize time input to H:i:s (DB time column)
+        $timeInput = $validated['time'] ?? null;
+        $time = null;
+        if ($timeInput) {
+            $formats = ['H:i', 'H:i:s', 'g:i A', 'h:i A', 'g:i a', 'h:i a'];
+            foreach ($formats as $fmt) {
+                try {
+                    $time = Carbon::createFromFormat($fmt, $timeInput);
+                    break;
+                } catch (\Exception $e) {
+                    // try next
+                }
+            }
+
+            // As a fallback try flexible parse
+            if (!$time) {
+                try {
+                    $time = Carbon::parse($timeInput);
+                } catch (\Exception $e) {
+                    // invalid time
+                }
+            }
+
+            if (!$time) {
+                return back()->withErrors(['time' => 'The time field must be a valid time (e.g., 08:00 or 08:00 AM)'])->withInput();
+            }
+
+            // store as H:i:s
+            $validated['time'] = $time->format('H:i:s');
+        }
 
         $event->update($validated);
 

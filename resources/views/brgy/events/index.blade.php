@@ -53,6 +53,21 @@
                                     <p class="text-xs font-semibold text-gray-500 uppercase">Organizer</p>
                                     <p class="text-gray-800">{{ $event->organizer }}</p>
                                 </div>
+                                @if($event->skCouncil)
+                                    <div>
+                                        <p class="text-xs font-semibold text-gray-500 uppercase">SK Council</p>
+                                        <div class="flex items-center gap-2">
+                                            <span class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded text-xs font-semibold">
+                                                {{ $event->skCouncil->term }}
+                                            </span>
+                                            @if($event->skCouncil->is_active)
+                                                <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-green-100 text-green-800 rounded text-xs">
+                                                    <i class="fas fa-check-circle"></i>Active
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endif
                                 @if($event->description)
                                     <div>
                                         <p class="text-xs font-semibold text-gray-500 uppercase">Description</p>

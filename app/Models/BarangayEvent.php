@@ -16,6 +16,7 @@ class BarangayEvent extends Model
      */
     protected $fillable = [
         'barangay_id',
+        'sk_council_id',
         'title',
         'date',
         'time',
@@ -39,5 +40,13 @@ class BarangayEvent extends Model
     public function barangay(): BelongsTo
     {
         return $this->belongsTo(Barangay::class);
+    }
+
+    /**
+     * Get the SK Council associated with this event.
+     */
+    public function skCouncil(): BelongsTo
+    {
+        return $this->belongsTo(SKCouncil::class, 'sk_council_id');
     }
 }
