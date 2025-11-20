@@ -14,22 +14,7 @@ class YouthSeeder extends Seeder
     public function run(): void
     {
         $barangays = Barangay::all();
-
-        $firstNames = [
-            'Maria', 'Juan', 'Jose', 'Rosa', 'Carlos', 'Ana', 'Miguel', 'Lucia',
-            'Antonio', 'Angela', 'Ricardo', 'Carmen', 'Francisco', 'Guadalupe',
-            'Luis', 'Dolores', 'Pedro', 'Isabel', 'Diego', 'Francisca',
-            'Manuel', 'Juana', 'Ramon', 'Petra', 'Jesus', 'Antonia',
-            'Gabriel', 'Magdalena', 'Enrique', 'Manuela', 'Ruben', 'Victoria',
-        ];
-
-        $lastNames = [
-            'Garcia', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez',
-            'Perez', 'Sanchez', 'Ramirez', 'Torres', 'Rivera', 'Cruz',
-            'Flores', 'Morales', 'Gutierrez', 'Reyes', 'Medina', 'Aguilar',
-            'Santos', 'Vargas', 'Castro', 'Ruiz', 'Delgado', 'Soto',
-            'Silva', 'Acosta', 'Fuentes', 'Campos', 'Munoz', 'Herrera',
-        ];
+        $faker = \Faker\Factory::create('en_PH'); // Use Philippine locale
 
         $suffixes = ['Jr.', 'Sr.', 'II', 'III', null];
 
@@ -61,32 +46,62 @@ class YouthSeeder extends Seeder
 
         // Generate exactly 20 youths per barangay
         foreach ($barangays as $barangay) {
-            $count = 20;
+            $count = 10;
 
             for ($i = 0; $i < $count; $i++) {
-                $firstName = $firstNames[array_rand($firstNames)];
-                $lastName = $lastNames[array_rand($lastNames)];
+                $firstName = $faker->firstName();
+                $middleName = $faker->firstName();
+                $lastName = $faker->lastName();
                 $suffix = $suffixes[array_rand($suffixes)];
+                $sex = $faker->randomElement(['Male', 'Female', 'Other']);
+
+                // Generate guardians (1-2 guardians)
+                $guardiansCount = rand(1, 2);
+                $guardians = [];
+                for ($g = 0; $g < $guardiansCount; $g++) {
+                    $guardians[] = [
+                        'first_name' => $faker->firstName(),
+                        'middle_name' => rand(0, 1) ? $faker->firstName() : null,
+                        'last_name' => $faker->lastName(),
+                    ];
+                }
+
+                // Generate siblings (1-5 siblings)
+                $siblingsCount = rand(1, 5);
+                $siblings = [];
+                for ($s = 0; $s < $siblingsCount; $s++) {
+                    $siblings[] = [
+                        'first_name' => $faker->firstName(),
+                        'middle_name' => rand(0, 1) ? $faker->firstName() : null,
+                        'last_name' => $lastName, // Same last name as youth
+                    ];
+                }
+
+                // Generate household income (50% have income data)
+                $householdIncome = rand(1, 2) ? $faker->numberBetween(5000, 50000) : null;
 
                 Youth::create([
                     'barangay_id' => $barangay->id,
                     'first_name' => $firstName,
-                    'middle_name' => $firstNames[array_rand($firstNames)],
+                    'middle_name' => $middleName,
                     'last_name' => $lastName,
                     'suffix' => $suffix,
-                    'date_of_birth' => now()->subYears(rand(15, 30))->subDays(rand(0, 365)),
-                    'sex' => ['Male', 'Female', 'Other'][array_rand(['Male', 'Female', 'Other'])],
+                    'date_of_birth' => $faker->dateTimeBetween('-30 years', '-15 years'),
+                    'sex' => $sex,
                     'purok' => $puroks[array_rand($puroks)],
                     'municipality' => 'Camalaniugan',
                     'province' => 'Cagayan',
-                    'contact_number' => '09'.rand(100000000, 999999999),
-                    'email' => strtolower($firstName.'.'.$lastName.'@example.com'),
+                    'contact_number' => $faker->numerify('09#########'),
+                    'email' => $faker->unique()->safeEmail(),
+                    'guardians' => count($guardians) > 0 ? $guardians : null,
+                    'siblings' => count($siblings) > 0 ? $siblings : null,
+                    'household_income' => $householdIncome,
                     'educational_attainment' => $educationalLevels[array_rand($educationalLevels)],
                     'skills' => $skills[array_rand($skills)],
-                    'latitude' => 18.2753372 + (rand(-300, 300) / 10000), // Camalaniugan center with ±0.03° radius (~3.3km)
-                    'longitude' => 121.6967438 + (rand(-300, 300) / 10000), // Camalaniugan center with ±0.03° radius (~3.3km)
-                    'status' => rand(1, 10) <= 8 ? 'active' : 'archived', // 80% active
-                    'remarks' => rand(1, 3) === 1 ? 'Seeded youth record for testing' : null,
+                    'latitude' => 18.2753372 + $faker->randomFloat(4, -0.03, 0.03), // Camalaniugan center with ±0.03° radius (~3.3km)
+                    'longitude' => 121.6967438 + $faker->randomFloat(4, -0.03, 0.03), // Camalaniugan center with ±0.03° radius (~3.3km)
+                    'status' => $faker->randomElement(['active', 'active', 'active', 'active', 'active', 'active', 'active', 'active', 'archived', 'archived']), // 80% active
+                    'remarks' => $faker->optional(0.33)->sentence(),
                 ]);
             }
         }
