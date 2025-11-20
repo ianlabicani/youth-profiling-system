@@ -19,6 +19,7 @@ class BarangaySeeder extends Seeder
         $barangayRole = Role::firstOrCreate(['name' => 'barangay']);
 
         $barangays = [
+            'Abagao',
             'Afunan-Cabayu',
             'Agusi',
             'Alilinu',

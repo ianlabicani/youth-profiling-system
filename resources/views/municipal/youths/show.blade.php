@@ -205,6 +205,85 @@
                 </div>
             </div>
 
+            <!-- Guardian Information -->
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="bg-purple-50 px-6 py-4 border-b">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-user-shield text-purple-600 mr-2"></i>Guardian Information
+                    </h3>
+                </div>
+                <div class="p-6">
+                    @if($youth->guardians && is_array($youth->guardians) && count($youth->guardians) > 0)
+                        <div class="space-y-4">
+                            @foreach($youth->guardians as $index => $guardian)
+                                @if(!empty($guardian['first_name']) || !empty($guardian['last_name']))
+                                    <div class="p-4 bg-purple-50 rounded-lg">
+                                        <label class="text-sm font-medium text-gray-600">Guardian {{ $index + 1 }}</label>
+                                        <p class="mt-1 text-gray-900 font-medium">
+                                            {{ $guardian['first_name'] ?? '' }}
+                                            {{ !empty($guardian['middle_name']) ? substr($guardian['middle_name'], 0, 1) . '.' : '' }}
+                                            {{ $guardian['last_name'] ?? '' }}
+                                        </p>
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-gray-500 italic">No guardian information provided</p>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Siblings Information -->
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="bg-teal-50 px-6 py-4 border-b">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-users text-teal-600 mr-2"></i>Siblings
+                    </h3>
+                </div>
+                <div class="p-6">
+                    @if($youth->siblings && is_array($youth->siblings) && count($youth->siblings) > 0)
+                        <div class="space-y-2">
+                            @foreach($youth->siblings as $index => $sibling)
+                                @if(!empty($sibling['first_name']) || !empty($sibling['last_name']))
+                                    <div class="p-3 bg-teal-50 rounded-lg">
+                                        <p class="text-gray-900 font-medium">
+                                            {{ $index + 1 }}.
+                                            {{ $sibling['first_name'] ?? '' }}
+                                            {{ !empty($sibling['middle_name']) ? substr($sibling['middle_name'], 0, 1) . '.' : '' }}
+                                            {{ $sibling['last_name'] ?? '' }}
+                                        </p>
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-gray-500 italic">No sibling information provided</p>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Household Information -->
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="bg-emerald-50 px-6 py-4 border-b">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-home text-emerald-600 mr-2"></i>Household Information
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <div>
+                        <label class="text-sm font-medium text-gray-600">Monthly Household Income</label>
+                        <p class="mt-1 text-gray-900 font-medium text-lg">
+                            @if($youth->household_income)
+                                <i class="fas fa-peso-sign text-emerald-600 mr-1"></i>{{ number_format($youth->household_income, 2) }}
+                            @else
+                                -
+                            @endif
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             <!-- Address Information -->
             <div class="bg-white rounded-lg shadow overflow-hidden">
                 <div class="bg-orange-50 px-6 py-4 border-b">

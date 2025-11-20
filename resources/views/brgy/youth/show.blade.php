@@ -109,6 +109,70 @@
                     </div>
                 </div>
 
+                <!-- Guardian Information -->
+                <div class="border-b pb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Guardian Information</h3>
+
+                    @if($youth->guardians && is_array($youth->guardians) && count($youth->guardians) > 0)
+                        <div class="space-y-4">
+                            @foreach($youth->guardians as $index => $guardian)
+                                @if(!empty($guardian['first_name']) || !empty($guardian['last_name']))
+                                    <div class="p-4 bg-gray-50 rounded-lg">
+                                        <p class="text-sm text-gray-600 mb-1">Guardian {{ $index + 1 }}</p>
+                                        <p class="text-lg font-medium text-gray-800">
+                                            {{ $guardian['first_name'] ?? '' }}
+                                            {{ !empty($guardian['middle_name']) ? substr($guardian['middle_name'], 0, 1) . '.' : '' }}
+                                            {{ $guardian['last_name'] ?? '' }}
+                                        </p>
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-gray-500 italic">No guardian information provided</p>
+                    @endif
+                </div>
+
+                <!-- Siblings Information -->
+                <div class="border-b pb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Siblings</h3>
+
+                    @if($youth->siblings && is_array($youth->siblings) && count($youth->siblings) > 0)
+                        <div class="space-y-2">
+                            @foreach($youth->siblings as $index => $sibling)
+                                @if(!empty($sibling['first_name']) || !empty($sibling['last_name']))
+                                    <div class="p-3 bg-gray-50 rounded-lg">
+                                        <p class="text-base font-medium text-gray-800">
+                                            {{ $index + 1 }}.
+                                            {{ $sibling['first_name'] ?? '' }}
+                                            {{ !empty($sibling['middle_name']) ? substr($sibling['middle_name'], 0, 1) . '.' : '' }}
+                                            {{ $sibling['last_name'] ?? '' }}
+                                        </p>
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-gray-500 italic">No sibling information provided</p>
+                    @endif
+                </div>
+
+                <!-- Household Information -->
+                <div class="border-b pb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Household Information</h3>
+
+                    <div>
+                        <p class="text-sm text-gray-600 mb-1">Monthly Household Income</p>
+                        <p class="text-lg font-medium text-gray-800">
+                            @if($youth->household_income)
+                                ₱{{ number_format($youth->household_income, 2) }}
+                            @else
+                                N/A
+                            @endif
+                        </p>
+                    </div>
+                </div>
+
                 <!-- Contact Information -->
                 <div class="border-b pb-6">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Contact Information</h3>

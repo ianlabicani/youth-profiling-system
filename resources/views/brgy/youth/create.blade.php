@@ -252,6 +252,117 @@
                     </div>
                 </div>
 
+                <!-- Guardian Information Section -->
+                <div class="border-b pb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Guardian Information</h3>
+                    <p class="text-sm text-gray-600 mb-4">Add up to 2 guardians</p>
+
+                    <div id="guardians-container" class="space-y-6">
+                        <!-- Guardian 1 -->
+                        <div class="guardian-entry p-4 bg-gray-50 rounded-lg">
+                            <div class="flex justify-between items-center mb-3">
+                                <h4 class="font-medium text-gray-700">Guardian 1</h4>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                                    <input
+                                        type="text"
+                                        name="guardians[0][first_name]"
+                                        value="{{ old('guardians.0.first_name') }}"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    >
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Middle Name</label>
+                                    <input
+                                        type="text"
+                                        name="guardians[0][middle_name]"
+                                        value="{{ old('guardians.0.middle_name') }}"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    >
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                                    <input
+                                        type="text"
+                                        name="guardians[0][last_name]"
+                                        value="{{ old('guardians.0.last_name') }}"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    >
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Guardian 2 -->
+                        <div class="guardian-entry p-4 bg-gray-50 rounded-lg">
+                            <div class="flex justify-between items-center mb-3">
+                                <h4 class="font-medium text-gray-700">Guardian 2</h4>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                                    <input
+                                        type="text"
+                                        name="guardians[1][first_name]"
+                                        value="{{ old('guardians.1.first_name') }}"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    >
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Middle Name</label>
+                                    <input
+                                        type="text"
+                                        name="guardians[1][middle_name]"
+                                        value="{{ old('guardians.1.middle_name') }}"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    >
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                                    <input
+                                        type="text"
+                                        name="guardians[1][last_name]"
+                                        value="{{ old('guardians.1.last_name') }}"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Siblings Section -->
+                <div class="border-b pb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Siblings</h3>
+
+                    <div id="siblings-container" class="space-y-4">
+                        <!-- Initial sibling entry will be added by JavaScript -->
+                    </div>
+
+                    <button type="button" onclick="addSibling()" class="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                        <i class="fas fa-plus mr-2"></i>Add Sibling
+                    </button>
+                </div>
+
+                <!-- Household Income Section -->
+                <div class="border-b pb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Household Information</h3>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Household Income (Monthly)</label>
+                        <input
+                            type="number"
+                            name="household_income"
+                            value="{{ old('household_income') }}"
+                            step="0.01"
+                            min="0"
+                            placeholder="Enter monthly household income"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                        <p class="text-sm text-gray-500 mt-1">Optional: Enter the total monthly household income</p>
+                    </div>
+                </div>
+
                 <!-- Contact Section -->
                 <div class="border-b pb-6">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Contact Information</h3>
@@ -449,5 +560,66 @@
             document.getElementById('photoInput').value = '';
             document.getElementById('photoPreview').innerHTML = '<i class="fas fa-image text-3xl text-gray-400"></i>';
         }
+    </script>
+
+    <!-- Siblings Management Script -->
+    <script>
+        let siblingCount = 0;
+
+        function addSibling() {
+            const container = document.getElementById('siblings-container');
+            const siblingDiv = document.createElement('div');
+            siblingDiv.className = 'sibling-entry p-4 bg-gray-50 rounded-lg';
+            siblingDiv.innerHTML = `
+                <div class="flex justify-between items-center mb-3">
+                    <h4 class="font-medium text-gray-700">Sibling ${siblingCount + 1}</h4>
+                    <button type="button" onclick="removeSibling(this)" class="text-red-600 hover:text-red-800">
+                        <i class="fas fa-trash"></i> Remove
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                        <input
+                            type="text"
+                            name="siblings[${siblingCount}][first_name]"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Middle Name</label>
+                        <input
+                            type="text"
+                            name="siblings[${siblingCount}][middle_name]"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                        <input
+                            type="text"
+                            name="siblings[${siblingCount}][last_name]"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                    </div>
+                </div>
+            `;
+            container.appendChild(siblingDiv);
+            siblingCount++;
+        }
+
+        function removeSibling(button) {
+            button.closest('.sibling-entry').remove();
+        }
+
+        // Load old siblings if validation failed
+        @if(old('siblings'))
+            @foreach(old('siblings') as $index => $sibling)
+                addSibling();
+                document.querySelector(`input[name="siblings[${siblingCount - 1}][first_name]"]`).value = "{{ $sibling['first_name'] ?? '' }}";
+                document.querySelector(`input[name="siblings[${siblingCount - 1}][middle_name]"]`).value = "{{ $sibling['middle_name'] ?? '' }}";
+                document.querySelector(`input[name="siblings[${siblingCount - 1}][last_name]"]`).value = "{{ $sibling['last_name'] ?? '' }}";
+            @endforeach
+        @endif
     </script>
 @endsection

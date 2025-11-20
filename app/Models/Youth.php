@@ -27,6 +27,9 @@ class Youth extends Model
         'province',
         'contact_number',
         'email',
+        'guardians',
+        'siblings',
+        'household_income',
         'educational_attainment',
         'skills',
         'latitude',
@@ -42,7 +45,10 @@ class Youth extends Model
      */
     protected $casts = [
         'skills' => 'array',
+        'guardians' => 'array',
+        'siblings' => 'array',
         'date_of_birth' => 'date',
+        'household_income' => 'decimal:2',
     ];
 
     public function getNameAttribute()
