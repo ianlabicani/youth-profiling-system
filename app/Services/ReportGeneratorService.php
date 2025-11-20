@@ -70,7 +70,17 @@ class ReportGeneratorService
         $prompts = [
             'youth_demographics' => "Analyze this youth demographics report data and provide:\n1. Key findings (2-3 bullet points)\n2. One trend or pattern identified\n3. One actionable recommendation\n\nData:\n$dataJson$contextStr\n\nKeep response concise and focused on insights relevant to youth profiling and resource allocation.",
 
-            'youth_leadership' => "Analyze this youth leadership report data and provide:\n1. Leadership coverage analysis (2-3 bullet points)\n2. Gaps or opportunities in youth representation\n3. One recommendation for improving youth engagement\n\nData:\n$dataJson$contextStr\n\nKeep response focused on governance and leadership development.",
+            'youth_leadership' => "Analyze this youth leadership report data and provide a structured response in this exact format:
+
+📊 Leadership Overview
+
+Finding: [A data-driven observation about leadership structure with specific numbers/percentages]
+
+🔍 Key Insight: [The most significant insight about youth leadership in 2-3 sentences]
+
+💡 Recommendation: [A strategic suggestion for improving youth governance in 2-3 sentences]
+
+Data:\n$dataJson$contextStr\n\nBe concise, specific with numbers, and actionable.",
 
             'youth_engagement' => "Analyze this youth engagement and events report data and provide:\n1. Engagement effectiveness assessment (2-3 bullet points)\n2. Participation trends or patterns\n3. One recommendation for improving youth engagement\n\nData:\n$dataJson$contextStr\n\nKeep response focused on activity effectiveness and program optimization.",
 
@@ -90,7 +100,7 @@ class ReportGeneratorService
         $defaults = [
             'youth_demographics' => '📊 Demographics Report\n• Detailed breakdown of youth population by key metrics\n• Data organized by barangay, age, education, and income\n• Enable filters to focus on specific demographics',
 
-            'youth_leadership' => '👥 Leadership Report\n• Overview of youth in leadership positions\n• SK Council and organization structure analysis\n• Identifies youth engagement in governance',
+            'youth_leadership' => "📊 Leadership Overview\n\nFinding: The youth leadership structure shows a comprehensive network of governance roles across all SK Councils. The distribution of positions reflects a balanced approach to youth representation and organizational capacity.\n\n🔍 Key Insight: Strong youth participation in formal governance roles indicates a mature system of youth engagement. This provides a foundation for sustainable youth development initiatives and intergenerational knowledge transfer.\n\n💡 Recommendation: Continue strengthening the SK Council system by providing targeted training and support programs for youth leaders to enhance their effectiveness and expand their influence on community decisions.",
 
             'youth_engagement' => '🎯 Engagement Report\n• Summary of youth participation in events and programs\n• Tracks activity levels and program effectiveness\n• Identifies engagement trends and opportunities',
 

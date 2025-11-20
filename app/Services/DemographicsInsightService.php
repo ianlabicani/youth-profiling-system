@@ -31,17 +31,19 @@ class DemographicsInsightService
      */
     public function generateSummary(array $reportData): string
     {
-        $cacheKey = 'demographics_summary_' . md5(json_encode($reportData));
+        $cacheKey = 'demographics_summary_'.md5(json_encode($reportData));
 
         return Cache::remember($cacheKey, now()->addHours(24), function () use ($reportData) {
             $apiKey = env('GEMINI_API_KEY');
 
-            if (!$apiKey) {
+            if (! $apiKey) {
                 \Log::warning('Gemini API key is not configured');
+
                 return $this->getDefaultSummary($reportData);
             }
 
             $prompt = $this->buildSummaryPrompt($reportData);
+
             return $this->callGemini($apiKey, 'gemini-2.0-flash', $prompt);
         });
     }
@@ -53,8 +55,9 @@ class DemographicsInsightService
     {
         $apiKey = env('GEMINI_API_KEY');
 
-        if (!$apiKey) {
+        if (! $apiKey) {
             \Log::warning('Gemini API key is not configured');
+
             return $this->getDefaultInsights($reportData);
         }
 
@@ -67,7 +70,7 @@ class DemographicsInsightService
         $insights['age_group'] = [
             'title' => '📊 Age Group Distribution',
             'description' => $this->callGemini($apiKey, $model, $agePrompt),
-            'icon' => '📊'
+            'icon' => '📊',
         ];
 
         // Generate Sex Distribution Insight
@@ -75,7 +78,7 @@ class DemographicsInsightService
         $insights['sex'] = [
             'title' => '👥 Sex Distribution',
             'description' => $this->callGemini($apiKey, $model, $sexPrompt),
-            'icon' => '👥'
+            'icon' => '👥',
         ];
 
         // Generate Education Insight
@@ -83,7 +86,7 @@ class DemographicsInsightService
         $insights['education'] = [
             'title' => '🎓 Educational Attainment',
             'description' => $this->callGemini($apiKey, $model, $educationPrompt),
-            'icon' => '🎓'
+            'icon' => '🎓',
         ];
 
         // Generate Income Insight
@@ -91,7 +94,7 @@ class DemographicsInsightService
         $insights['income'] = [
             'title' => '💰 Household Income',
             'description' => $this->callGemini($apiKey, $model, $incomePrompt),
-            'icon' => '💰'
+            'icon' => '💰',
         ];
 
         return $insights;
@@ -112,10 +115,10 @@ class DemographicsInsightService
                     'contents' => [
                         [
                             'parts' => [
-                                ['text' => $prompt]
-                            ]
-                        ]
-                    ]
+                                ['text' => $prompt],
+                            ],
+                        ],
+                    ],
                 ]
             );
 
@@ -125,7 +128,8 @@ class DemographicsInsightService
 
             return 'Unable to generate insight at this time.';
         } catch (\Exception $e) {
-            \Log::error('Gemini API Error: ' . $e->getMessage());
+            \Log::error('Gemini API Error: '.$e->getMessage());
+
             return 'Unable to generate insight at this time.';
         }
     }
@@ -139,7 +143,7 @@ class DemographicsInsightService
         $total = $reportData['total_youth'];
 
         $ageBreakdown = implode(', ', array_map(
-            fn($group, $count) => "{$group}: {$count} youth (" . round(($count / max(1, $total)) * 100, 1) . "%)",
+            fn ($group, $count) => "{$group}: {$count} youth (".round(($count / max(1, $total)) * 100, 1).'%)',
             array_keys($ageData),
             $ageData
         ));
@@ -171,7 +175,7 @@ PROMPT;
         $total = $reportData['total_youth'];
 
         $sexBreakdown = implode(', ', array_map(
-            fn($sex, $count) => "{$sex}: {$count} youth (" . round(($count / max(1, $total)) * 100, 1) . "%)",
+            fn ($sex, $count) => "{$sex}: {$count} youth (".round(($count / max(1, $total)) * 100, 1).'%)',
             array_keys($sexData),
             $sexData
         ));
@@ -204,7 +208,7 @@ PROMPT;
         $outOfSchool = $reportData['out_of_school'];
 
         $educationBreakdown = implode(', ', array_map(
-            fn($level, $count) => "{$level}: {$count} youth (" . round(($count / max(1, $total)) * 100, 1) . "%)",
+            fn ($level, $count) => "{$level}: {$count} youth (".round(($count / max(1, $total)) * 100, 1).'%)',
             array_keys($educationData),
             $educationData
         ));
@@ -237,10 +241,10 @@ PROMPT;
         $total = $reportData['total_youth'];
 
         // Filter out empty key
-        $incomeData = array_filter($incomeData, fn($k) => $k !== '', ARRAY_FILTER_USE_KEY);
+        $incomeData = array_filter($incomeData, fn ($k) => $k !== '', ARRAY_FILTER_USE_KEY);
 
         $incomeBreakdown = implode(', ', array_map(
-            fn($bracket, $count) => "{$bracket}: {$count} youth (" . round(($count / max(1, $total)) * 100, 1) . "%)",
+            fn ($bracket, $count) => "{$bracket}: {$count} youth (".round(($count / max(1, $total)) * 100, 1).'%)',
             array_keys($incomeData),
             $incomeData
         ));
@@ -272,6 +276,7 @@ PROMPT;
     private function generateCacheKey(array $reportData): string
     {
         $hash = md5(json_encode($reportData));
+
         return "demographics_insights_{$hash}";
     }
 
@@ -284,23 +289,23 @@ PROMPT;
             'age_group' => [
                 'title' => '📊 Age Group Distribution',
                 'description' => 'Age group distribution data is available. Review the chart above for detailed breakdown by age ranges.',
-                'icon' => '📊'
+                'icon' => '📊',
             ],
             'sex' => [
                 'title' => '👥 Sex Distribution',
                 'description' => 'Gender distribution shows diverse representation across your youth population.',
-                'icon' => '👥'
+                'icon' => '👥',
             ],
             'education' => [
                 'title' => '🎓 Educational Attainment',
                 'description' => 'Educational attainment levels are displayed in the chart. Consider developing targeted programs based on education levels.',
-                'icon' => '🎓'
+                'icon' => '🎓',
             ],
             'income' => [
                 'title' => '💰 Household Income',
                 'description' => 'Household income distribution is shown above. This data can inform economic support and opportunity programs.',
-                'icon' => '💰'
-            ]
+                'icon' => '💰',
+            ],
         ];
     }
 
@@ -315,7 +320,7 @@ PROMPT;
         $dominantAgeCount = $ageData[$dominantAgeGroup] ?? 0;
 
         $sexDistribution = implode(', ', array_map(
-            fn($sex, $count) => "{$sex}: {$count} (" . round(($count / max(1, $total)) * 100, 1) . "%)",
+            fn ($sex, $count) => "{$sex}: {$count} (".round(($count / max(1, $total)) * 100, 1).'%)',
             array_keys($reportData['by_sex']),
             $reportData['by_sex']
         ));

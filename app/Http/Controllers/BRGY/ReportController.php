@@ -125,18 +125,27 @@ class ReportController extends Controller
         $councils = SKCouncil::where('barangay_id', $barangay->id)->with('barangay')->get();
         $organizations = Organization::where('barangay_id', $barangay->id)->get();
 
-        $leadersByPosition = Youth::where('barangay_id', $barangay->id)
-            ->whereNotNull('leadership_position')
-            ->groupBy('leadership_position')
-            ->selectRaw('leadership_position, count(*) as count')
-            ->get()
-            ->pluck('count', 'leadership_position')
-            ->toArray();
+        // Count leaders by position from sk_councils
+        $chairpersons = $councils->filter(fn($c) => $c->chairperson_id)->count();
+        $secretaries = $councils->filter(fn($c) => $c->secretary_id)->count();
+        $treasurers = $councils->filter(fn($c) => $c->treasurer_id)->count();
+        $kagawads = 0;
+        foreach ($councils as $council) {
+            $kagawadIds = is_array($council->kagawad_ids) ? $council->kagawad_ids : json_decode($council->kagawad_ids, true) ?? [];
+            $kagawads += count($kagawadIds);
+        }
+
+        $leadersByPosition = [
+            'Chairperson' => $chairpersons,
+            'Secretary' => $secretaries,
+            'Treasurer' => $treasurers,
+            'Kagawad' => $kagawads,
+        ];
 
         $reportData = [
             'total_councils' => $councils->count(),
             'active_councils' => $councils->where('is_active', true)->count(),
-            'total_leaders' => Youth::where('barangay_id', $barangay->id)->whereNotNull('leadership_position')->count(),
+            'total_leaders' => $chairpersons + $secretaries + $treasurers + $kagawads,
             'positions_held' => $leadersByPosition,
             'organizations' => $organizations->count(),
         ];
