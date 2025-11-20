@@ -207,10 +207,27 @@
                     </div>
                     @if(isset($ageBuckets) && count($ageBuckets))
                         @foreach($ageBuckets as $bucket => $val)
-                            <div class="flex justify-between py-1"><span>{{ $bucket }} years</span><span class="font-semibold">{{ number_format($val) }}</span></div>
+                            <div class="flex justify-between py-1"><span>{{ $bucket }}</span><span class="font-semibold">{{ $val }}</span></div>
                         @endforeach
                     @else
                         <p class="text-gray-500">No age data.</p>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Household Income Ranges -->
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h3 class="text-lg font-semibold text-gray-800">Household Income</h3>
+                <div class="mt-3 text-sm">
+                    <div class="mb-3">
+                        <canvas id="incomeChart" height="140"></canvas>
+                    </div>
+                    @if(isset($incomeRanges) && count($incomeRanges))
+                        @foreach($incomeRanges as $range => $val)
+                            <div class="flex justify-between py-1"><span>{{ $range }}</span><span class="font-semibold">{{ number_format($val) }}</span></div>
+                        @endforeach
+                    @else
+                        <p class="text-gray-500">No income data.</p>
                     @endif
                 </div>
             </div>
@@ -309,6 +326,9 @@
 
         $barangayLabels = array_map(function($item) { return $item['barangay']; }, $youthByBarangay->toArray());
         $barangayData = array_map(function($item) { return $item['total']; }, $youthByBarangay->toArray());
+
+        $incomeLabels = array_keys($incomeRanges ?? []);
+        $incomeData = array_values($incomeRanges ?? []);
     @endphp
 
     const sexLabels = {!! json_encode($sexLabels) !!};
@@ -325,6 +345,9 @@
 
     const barangayLabels = {!! json_encode($barangayLabels) !!};
     const barangayData = {!! json_encode($barangayData) !!};
+
+    const incomeLabels = {!! json_encode($incomeLabels) !!};
+    const incomeData = {!! json_encode($incomeData) !!};
 
     const colorPalette = ['#2563eb','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#f97316','#84cc16'];
 
@@ -380,6 +403,16 @@
         new Chart(bCtx, {
             type: 'bar',
             data: { labels: barangayLabels, datasets: [{ label: 'Count', data: barangayData, backgroundColor: getColors(barangayLabels.length) }] },
+            options: { indexAxis: 'y', scales: { x: { beginAtZero: true } }, plugins: { legend: { display: false } } }
+        });
+    }
+
+    // Income ranges bar
+    if(incomeLabels.length){
+        const incomeCtx = document.getElementById('incomeChart').getContext('2d');
+        new Chart(incomeCtx, {
+            type: 'bar',
+            data: { labels: incomeLabels, datasets: [{ label: 'Count', data: incomeData, backgroundColor: getColors(incomeLabels.length) }] },
             options: { indexAxis: 'y', scales: { x: { beginAtZero: true } }, plugins: { legend: { display: false } } }
         });
     }

@@ -47,6 +47,14 @@ class DashboardController extends Controller
                 ->orderByDesc('total')
                 ->get();
 
+            // Income ranges - Municipality-wide
+            $incomeRanges = Youth::whereNotNull('household_income')
+                ->selectRaw('household_income, count(*) as total')
+                ->groupBy('household_income')
+                ->orderByRaw("FIELD(household_income, 'No Income', 'Below 10,000', '10,000 - 20,000', '20,000 - 30,000', '30,000 - 40,000', '40,000 - 50,000', 'Above 50,000')")
+                ->pluck('total', 'household_income')
+                ->toArray();
+
             // Age buckets - Municipality-wide
             $ageBuckets = [
                 '15-17' => 0,
@@ -148,7 +156,7 @@ class DashboardController extends Controller
 
             return compact(
                 'totalYouth', 'totalBarangays', 'activeCouncils', 'totalOrganizations', 'upcomingEvents', 'eventsThisYear',
-                'youthBySex', 'youthByStatus', 'education', 'ageBuckets', 'months', 'dataRegs',
+                'youthBySex', 'youthByStatus', 'education', 'incomeRanges', 'ageBuckets', 'months', 'dataRegs',
                 'councils', 'distinctPositionsCount', 'chairCount', 'secretaryCount', 'treasurerCount', 'kagawadTotal',
                 'upcomingList', 'recentYouth', 'outOfSchoolCount', 'youthByBarangay', 'totalOfficers'
             );
