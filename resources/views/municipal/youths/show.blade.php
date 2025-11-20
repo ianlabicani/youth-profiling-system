@@ -272,10 +272,10 @@
                 </div>
                 <div class="p-6">
                     <div>
-                        <label class="text-sm font-medium text-gray-600">Monthly Household Income</label>
+                        <label class="text-sm font-medium text-gray-600">Monthly Household Income Range</label>
                         <p class="mt-1 text-gray-900 font-medium text-lg">
                             @if($youth->household_income)
-                                <i class="fas fa-peso-sign text-emerald-600 mr-1"></i>{{ number_format($youth->household_income, 2) }}
+                                <i class="fas fa-peso-sign text-emerald-600 mr-1"></i>{{ $youth->household_income }}
                             @else
                                 -
                             @endif

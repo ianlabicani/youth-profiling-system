@@ -162,13 +162,9 @@
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Household Information</h3>
 
                     <div>
-                        <p class="text-sm text-gray-600 mb-1">Monthly Household Income</p>
+                        <p class="text-sm text-gray-600 mb-1">Monthly Household Income Range</p>
                         <p class="text-lg font-medium text-gray-800">
-                            @if($youth->household_income)
-                                ₱{{ number_format($youth->household_income, 2) }}
-                            @else
-                                N/A
-                            @endif
+                            {{ $youth->household_income ?? 'N/A' }}
                         </p>
                     </div>
                 </div>

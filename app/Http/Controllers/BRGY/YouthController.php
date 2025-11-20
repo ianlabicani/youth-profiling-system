@@ -126,6 +126,15 @@ class YouthController extends Controller
     {
         // Get the barangay of the logged-in user
         $userBarangay = auth()->user()->barangays()->first();
+        $incomeRange = [
+            'No Income',
+            'Below 10,000',
+            '10,000 - 20,000',
+            '20,001 - 30,000',
+            '30,001 - 40,000',
+            '40,001 - 50,000',
+            'Above 50,000',
+        ];
 
         if (! $userBarangay) {
             return redirect()->route('brgy.youth.index')
@@ -135,6 +144,7 @@ class YouthController extends Controller
         return view('brgy.youth.create', [
             'userBarangay' => $userBarangay,
             'puroksByBarangay' => $this->puroksByBarangay,
+            'incomeRange' => $incomeRange,
         ]);
     }
 
@@ -194,7 +204,7 @@ class YouthController extends Controller
             'siblings.*.first_name' => 'required|string|max:255',
             'siblings.*.middle_name' => 'nullable|string|max:255',
             'siblings.*.last_name' => 'required|string|max:255',
-            'household_income' => 'nullable|numeric|min:0',
+            'household_income' => 'nullable|string|max:255',
             'educational_attainment' => 'nullable|string|max:255',
             'skills' => 'nullable|string',
             'status' => 'nullable|in:active,archived',
@@ -265,10 +275,21 @@ class YouthController extends Controller
                 ->withErrors(['error' => 'You can only edit youth from your barangay.']);
         }
 
+        $incomeRange = [
+            'No Income',
+            'Below 10,000',
+            '10,000 - 20,000',
+            '20,001 - 30,000',
+            '30,001 - 40,000',
+            '40,001 - 50,000',
+            'Above 50,000',
+        ];
+
         return view('brgy.youth.edit', [
             'youth' => $youth,
             'userBarangay' => $userBarangay,
             'puroksByBarangay' => $this->puroksByBarangay,
+            'incomeRange' => $incomeRange,
         ]);
     }
 
@@ -334,7 +355,7 @@ class YouthController extends Controller
             'siblings.*.first_name' => 'required|string|max:255',
             'siblings.*.middle_name' => 'nullable|string|max:255',
             'siblings.*.last_name' => 'required|string|max:255',
-            'household_income' => 'nullable|numeric|min:0',
+            'household_income' => 'nullable|string|max:255',
             'educational_attainment' => 'nullable|string|max:255',
             'skills' => 'nullable|string',
             'status' => 'nullable|in:active,archived',

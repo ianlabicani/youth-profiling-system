@@ -48,7 +48,6 @@ class Youth extends Model
         'guardians' => 'array',
         'siblings' => 'array',
         'date_of_birth' => 'date',
-        'household_income' => 'decimal:2',
     ];
 
     public function getNameAttribute()

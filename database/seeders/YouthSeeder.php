@@ -77,8 +77,17 @@ class YouthSeeder extends Seeder
                     ];
                 }
 
-                // Generate household income (50% have income data)
-                $householdIncome = rand(1, 2) ? $faker->numberBetween(5000, 50000) : null;
+                // Generate household income range (70% have income data)
+                $incomeRanges = [
+                    'No Income',
+                    'Below 10,000',
+                    '10,000 - 20,000',
+                    '20,001 - 30,000',
+                    '30,001 - 40,000',
+                    '40,001 - 50,000',
+                    'Above 50,000',
+                ];
+                $householdIncome = rand(1, 10) <= 7 ? $incomeRanges[array_rand($incomeRanges)] : null;
 
                 Youth::create([
                     'barangay_id' => $barangay->id,
