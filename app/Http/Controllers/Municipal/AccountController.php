@@ -7,6 +7,7 @@ use App\Models\Barangay;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AccountController extends Controller
 {
@@ -67,6 +68,14 @@ class AccountController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
+    public function show(User $account)
+    {
+        return view('municipal.accounts.show', compact('account'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
     public function edit(User $account)
     {
         $barangays = Barangay::orderBy('name')->get();
@@ -118,5 +127,75 @@ class AccountController extends Controller
 
         return redirect()->route('municipal.accounts.index')
             ->with('success', 'Barangay account deleted successfully.');
+    }
+
+    /**
+     * Export accounts to PDF or Excel
+     */
+    public function export(Request $request)
+    {
+        $format = $request->query('format', 'pdf');
+
+        $barangayRole = Role::where('name', 'barangay')->first();
+        $accounts = User::whereHas('roles', function ($query) use ($barangayRole) {
+            $query->where('role_id', $barangayRole?->id);
+        })->with('barangays')->get();
+
+        if ($format === 'excel') {
+            return $this->exportToExcel($accounts);
+        } else {
+            return $this->exportToPdf($accounts);
+        }
+    }
+
+    /**
+     * Export to Excel format
+     */
+    private function exportToExcel($accounts)
+    {
+        $filename = 'barangay_accounts_' . now()->format('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=utf-8',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+
+        $data = [];
+        $data[] = ['Name', 'Email', 'Barangay', 'Created At'];
+
+        foreach ($accounts as $account) {
+            $barangay = $account->barangays()->first()?->name ?? 'Not Assigned';
+            $data[] = [
+                $account->name,
+                $account->email,
+                $barangay,
+                $account->created_at->format('Y-m-d H:i:s'),
+            ];
+        }
+
+        $callback = function () use ($data) {
+            $file = fopen('php://output', 'w');
+            foreach ($data as $row) {
+                fputcsv($file, $row);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Export to PDF format
+     */
+    private function exportToPdf($accounts)
+    {
+        $data = [
+            'accounts' => $accounts,
+            'title' => 'Barangay Accounts Report',
+            'date' => now()->format('Y-m-d H:i:s'),
+        ];
+
+        $pdf = Pdf::loadView('exports.accounts-pdf', $data);
+        return $pdf->download('barangay_accounts_' . now()->format('Y-m-d_H-i-s') . '.pdf');
     }
 }

@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Municipal;
 use App\Http\Controllers\Controller;
 use App\Models\Organization;
 use App\Models\Youth;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class OrganizationController extends Controller
 {
@@ -243,5 +245,332 @@ class OrganizationController extends Controller
         $organization->delete();
 
         return redirect()->route('municipal.organizations.index')->with('success', 'Organization deleted');
+    }
+
+    /**
+     * Export organizations to PDF or Excel
+     */
+    public function export(Request $request)
+    {
+        $format = $request->query('format', 'pdf');
+        $organizations = Organization::all();
+
+        if ($format === 'excel') {
+            return $this->exportToExcel($organizations);
+        } else {
+            return $this->exportToPdf($organizations);
+        }
+    }
+
+    /**
+     * Export to Excel format
+     */
+    private function exportToExcel($organizations)
+    {
+        $filename = 'organizations_' . now()->format('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=utf-8',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+
+        $data = [];
+        $data[] = ['ID', 'Name', 'Barangay', 'President', 'Vice President', 'Secretary', 'Treasurer', 'Members', 'Created At'];
+
+        foreach ($organizations as $org) {
+            $barangay = $org->barangay?->name ?? 'N/A';
+            $president = $org->president ? $org->president->first_name . ' ' . $org->president->last_name : 'N/A';
+            $vicePresident = $org->vicePresident ? $org->vicePresident->first_name . ' ' . $org->vicePresident->last_name : 'N/A';
+            $secretary = $org->secretary ? $org->secretary->first_name . ' ' . $org->secretary->last_name : 'N/A';
+            $treasurer = $org->treasurer ? $org->treasurer->first_name . ' ' . $org->treasurer->last_name : 'N/A';
+            $memberCount = count($org->members ?? []);
+
+            $data[] = [
+                $org->id,
+                $org->name ?? '',
+                $barangay,
+                $president,
+                $vicePresident,
+                $secretary,
+                $treasurer,
+                $memberCount,
+                $org->created_at->format('Y-m-d H:i:s'),
+            ];
+        }
+
+        $callback = function () use ($data) {
+            $file = fopen('php://output', 'w');
+            foreach ($data as $row) {
+                fputcsv($file, $row);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Export to PDF format
+     */
+    private function exportToPdf($organizations)
+    {
+        $data = [
+            'organizations' => $organizations,
+            'title' => 'Organizations Report',
+            'date' => now()->format('Y-m-d H:i:s'),
+        ];
+
+        $pdf = Pdf::loadView('exports.organizations-pdf', $data);
+        return $pdf->download('organizations_' . now()->format('Y-m-d_H-i-s') . '.pdf');
+    }
+
+    /**
+     * Export all organizations grouped by organization with full details
+     */
+    public function exportGrouped(Request $request)
+    {
+        $format = $request->query('format', 'pdf');
+        $organizations = Organization::with('barangay', 'president', 'vicePresident', 'secretary', 'treasurer')->get();
+
+        if ($format === 'excel') {
+            return $this->exportGroupedToExcel($organizations);
+        } else {
+            return $this->exportGroupedToPdf($organizations);
+        }
+    }
+
+    /**
+     * Export grouped organizations to Excel
+     */
+    private function exportGroupedToExcel($organizations)
+    {
+        $filename = 'organizations_grouped_' . now()->format('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=utf-8',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+
+        $callback = function () use ($organizations) {
+            $file = fopen('php://output', 'w');
+
+            foreach ($organizations as $organization) {
+                // Organization header
+                fputcsv($file, ['ORGANIZATION: ' . ($organization->name ?? 'Organization #' . $organization->id)]);
+                fputcsv($file, ['Barangay', $organization->barangay?->name ?? 'N/A']);
+                fputcsv($file, ['Description', $organization->description ?? '']);
+                fputcsv($file, ['Total Members', count($organization->members ?? [])]);
+                fputcsv($file, []);
+
+                // Officers
+                fputcsv($file, ['Position', 'Name', 'Contact']);
+
+                $president = $organization->president ?
+                    $organization->president->first_name . ' ' . ($organization->president->middle_name ? substr($organization->president->middle_name, 0, 1) . '. ' : '') . $organization->president->last_name
+                    : 'Not Assigned';
+                fputcsv($file, ['President', $president, $organization->president?->contact_number ?? '']);
+
+                $vicePresident = $organization->vicePresident ?
+                    $organization->vicePresident->first_name . ' ' . ($organization->vicePresident->middle_name ? substr($organization->vicePresident->middle_name, 0, 1) . '. ' : '') . $organization->vicePresident->last_name
+                    : 'Not Assigned';
+                fputcsv($file, ['Vice President', $vicePresident, $organization->vicePresident?->contact_number ?? '']);
+
+                $secretary = $organization->secretary ?
+                    $organization->secretary->first_name . ' ' . ($organization->secretary->middle_name ? substr($organization->secretary->middle_name, 0, 1) . '. ' : '') . $organization->secretary->last_name
+                    : 'Not Assigned';
+                fputcsv($file, ['Secretary', $secretary, $organization->secretary?->contact_number ?? '']);
+
+                $treasurer = $organization->treasurer ?
+                    $organization->treasurer->first_name . ' ' . ($organization->treasurer->middle_name ? substr($organization->treasurer->middle_name, 0, 1) . '. ' : '') . $organization->treasurer->last_name
+                    : 'Not Assigned';
+                fputcsv($file, ['Treasurer', $treasurer, $organization->treasurer?->contact_number ?? '']);
+
+                fputcsv($file, []);
+
+                // Members
+                if ($organization->members && count($organization->members) > 0) {
+                    fputcsv($file, ['Members']);
+                    fputcsv($file, ['Name', 'Age', 'Sex', 'Contact', 'Email', 'Status', 'Barangay']);
+
+                    foreach ($organization->members as $member) {
+                        fputcsv($file, [
+                            ($member['first_name'] ?? '') . ' ' . ($member['middle_name'] ? substr($member['middle_name'], 0, 1) . '. ' : '') . ($member['last_name'] ?? ''),
+                            $member['age'] ?? '',
+                            $member['sex'] ?? '',
+                            $member['contact_number'] ?? '',
+                            $member['email'] ?? '',
+                            $member['status'] ?? '',
+                            $member['barangay_name'] ?? '',
+                        ]);
+                    }
+                }
+
+                fputcsv($file, []);
+                fputcsv($file, ['---']);
+                fputcsv($file, []);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Export grouped organizations to PDF
+     */
+    private function exportGroupedToPdf($organizations)
+    {
+        $data = [
+            'organizations' => $organizations,
+            'date' => now()->format('Y-m-d H:i:s'),
+        ];
+
+        $pdf = Pdf::loadView('exports.organizations-grouped-pdf', $data);
+        return $pdf->download('organizations_grouped_' . now()->format('Y-m-d_H-i-s') . '.pdf');
+    }
+
+    /**
+     * Export single organization
+     */
+    public function exportSingle(Organization $organization, string $format = 'pdf')
+    {
+        if ($format === 'excel') {
+            return $this->exportSingleToExcel($organization);
+        } else {
+            return $this->exportSingleToPdf($organization);
+        }
+    }
+
+    /**
+     * Export single organization to Excel format with members
+     */
+    private function exportSingleToExcel(Organization $organization)
+    {
+        $filename = 'organization_' . Str::slug($organization->name) . '_' . now()->format('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=utf-8',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+
+        $callback = function () use ($organization) {
+            $file = fopen('php://output', 'w');
+
+            // Organization Header
+            fputcsv($file, ['ORGANIZATION REPORT']);
+            fputcsv($file, []);
+            fputcsv($file, ['Organization Name', $organization->name ?? '']);
+            fputcsv($file, ['Barangay', $organization->barangay?->name ?? 'N/A']);
+            fputcsv($file, ['Description', $organization->description ?? '']);
+            fputcsv($file, ['Created', $organization->created_at->format('Y-m-d H:i:s')]);
+            fputcsv($file, []);
+
+            // Officers Section
+            fputcsv($file, ['OFFICERS']);
+            fputcsv($file, ['Position', 'Name', 'Contact Number']);
+
+            $president = $organization->president ?
+                $organization->president->first_name . ' ' . ($organization->president->middle_name ? substr($organization->president->middle_name, 0, 1) . '. ' : '') . $organization->president->last_name
+                : 'Not Assigned';
+            fputcsv($file, ['President', $president, $organization->president?->contact_number ?? '']);
+
+            $vicePresident = $organization->vicePresident ?
+                $organization->vicePresident->first_name . ' ' . ($organization->vicePresident->middle_name ? substr($organization->vicePresident->middle_name, 0, 1) . '. ' : '') . $organization->vicePresident->last_name
+                : 'Not Assigned';
+            fputcsv($file, ['Vice President', $vicePresident, $organization->vicePresident?->contact_number ?? '']);
+
+            $secretary = $organization->secretary ?
+                $organization->secretary->first_name . ' ' . ($organization->secretary->middle_name ? substr($organization->secretary->middle_name, 0, 1) . '. ' : '') . $organization->secretary->last_name
+                : 'Not Assigned';
+            fputcsv($file, ['Secretary', $secretary, $organization->secretary?->contact_number ?? '']);
+
+            $treasurer = $organization->treasurer ?
+                $organization->treasurer->first_name . ' ' . ($organization->treasurer->middle_name ? substr($organization->treasurer->middle_name, 0, 1) . '. ' : '') . $organization->treasurer->last_name
+                : 'Not Assigned';
+            fputcsv($file, ['Treasurer', $treasurer, $organization->treasurer?->contact_number ?? '']);
+
+            fputcsv($file, []);
+
+            // Members Section
+            fputcsv($file, ['MEMBERS (' . count($organization->members ?? []) . ')']);
+            fputcsv($file, ['Name', 'Age', 'Sex', 'Contact Number', 'Email', 'Status', 'Barangay']);
+
+            if ($organization->members && count($organization->members) > 0) {
+                foreach ($organization->members as $member) {
+                    fputcsv($file, [
+                        ($member['first_name'] ?? '') . ' ' . ($member['middle_name'] ? substr($member['middle_name'], 0, 1) . '. ' : '') . ($member['last_name'] ?? ''),
+                        $member['age'] ?? '',
+                        $member['sex'] ?? '',
+                        $member['contact_number'] ?? '',
+                        $member['email'] ?? '',
+                        $member['status'] ?? '',
+                        $member['barangay_name'] ?? '',
+                    ]);
+                }
+            }
+
+            fputcsv($file, []);
+
+            // Committee Heads Section
+            if ($organization->committee_heads && count($organization->committee_heads) > 0) {
+                fputcsv($file, ['COMMITTEE HEADS']);
+                fputcsv($file, ['Name', 'Committee', 'Contact']);
+
+                foreach ($organization->committee_heads as $head) {
+                    fputcsv($file, [
+                        $head['name'] ?? '',
+                        $head['committee'] ?? '',
+                        $head['contact'] ?? '',
+                    ]);
+                }
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Export single organization to PDF format with members
+     */
+    private function exportSingleToPdf(Organization $organization)
+    {
+        // Fetch members
+        $memberIds = $organization->members ?? [];
+        $members = $memberIds ? Youth::whereIn('id', $memberIds)->get() : collect();
+
+        // Enrich committee heads with Youth models
+        $committeeHeads = collect($organization->committee_heads ?? [])->map(function ($item) {
+            $item['head'] = isset($item['head_id']) ? Youth::find($item['head_id']) : null;
+            return $item;
+        })->toArray();
+
+        // Format members data for PDF
+        $membersData = $members->map(function ($member) use ($organization) {
+            $age = $member->date_of_birth ? \Carbon\Carbon::parse($member->date_of_birth)->age : null;
+            return [
+                'first_name' => $member->first_name,
+                'middle_name' => $member->middle_name,
+                'last_name' => $member->last_name,
+                'age' => $age,
+                'sex' => $member->sex,
+                'contact_number' => $member->contact_number,
+                'email' => $member->email,
+                'status' => $member->status,
+                'barangay_name' => $member->barangay?->name ?? 'N/A',
+            ];
+        })->toArray();
+
+        $data = [
+            'organization' => $organization,
+            'committeeHeads' => $committeeHeads,
+            'members' => $membersData,
+            'date' => now()->format('Y-m-d H:i:s'),
+        ];
+
+        $pdf = Pdf::loadView('exports.organization-single-pdf', $data);
+        return $pdf->download('organization_' . Str::slug($organization->name) . '_' . now()->format('Y-m-d_H-i-s') . '.pdf');
     }
 }

@@ -12,15 +12,24 @@ Route::middleware(['auth', 'verified'])->prefix('municipal')->name('municipal.')
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/heatmap', [DashboardController::class, 'heatmap'])->name('heatmap');
 
-    // Accounts Management Routes
+    // Accounts Management Routes - export first before resource
+    Route::get('accounts/export', [AccountController::class, 'export'])->name('accounts.export');
     Route::resource('accounts', AccountController::class);
 
-    // Barangays Management Routes
+    // Barangays Management Routes - export first before resource
+    Route::get('barangays/export', [BarangayController::class, 'export'])->name('barangays.export');
     Route::resource('barangays', BarangayController::class);
+
+    // Youths Management Routes - export first before resource
+    Route::get('youths/export', [YouthController::class, 'export'])->name('youths.export');
+    Route::get('youths/out-of-school/export', [YouthController::class, 'exportOutOfSchool'])->name('youths.out-of-school.export');
     Route::get('youths/out-of-school', [YouthController::class, 'outOfSchool'])->name('youths.out-of-school');
     Route::resource('youths', YouthController::class)->only(['index', 'show']);
 
     // Organizations CRUD - custom routes first (before resource to avoid conflict)
+    Route::get('organizations/export-grouped/{format?}', [OrganizationController::class, 'exportGrouped'])->name('organizations.export-grouped');
+    Route::get('organizations/export', [OrganizationController::class, 'export'])->name('organizations.export');
+    Route::get('organizations/{organization}/export/{format}', [OrganizationController::class, 'exportSingle'])->name('organizations.export-single');
     Route::get('organizations/search-youth', [OrganizationController::class, 'searchYouth'])->name('organizations.search-youth');
     Route::get('organizations/get-youth', [OrganizationController::class, 'getYouth'])->name('organizations.get-youth');
     Route::resource('organizations', OrganizationController::class);

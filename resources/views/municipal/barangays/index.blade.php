@@ -8,9 +8,19 @@
             <h1 class="text-3xl font-bold text-gray-800">Barangays</h1>
             <p class="text-gray-600 mt-1">Manage barangays in Camalaniugan</p>
         </div>
-        <a href="{{ route('municipal.barangays.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-            <i class="fas fa-plus mr-2"></i>Add Barangay
-        </a>
+        <div class="flex gap-3 flex-wrap">
+            <a href="{{ route('municipal.barangays.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                <i class="fas fa-plus mr-2"></i>Add Barangay
+            </a>
+            <div class="flex gap-2">
+                <button type="button" onclick="exportData('barangays', 'pdf')" class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                    <i class="fas fa-file-pdf mr-2"></i>Export PDF
+                </button>
+                <button type="button" onclick="exportData('barangays', 'excel')" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                    <i class="fas fa-file-excel mr-2"></i>Export Excel
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Alert Messages -->
@@ -88,5 +98,27 @@
             }, 5000);
         }
     });
+
+    function exportData(dataType, format) {
+        const queryParams = new URLSearchParams(window.location.search);
+        const params = new URLSearchParams();
+
+        // Add all filter parameters
+        for (let [key, value] of queryParams) {
+            params.append(key, value);
+        }
+
+        params.append('format', format);
+
+        const routeMap = {
+            'accounts': '{{ route('municipal.accounts.export', [], false) }}',
+            'barangays': '{{ route('municipal.barangays.export', [], false) }}',
+            'organizations': '{{ route('municipal.organizations.export', [], false) }}',
+            'youths': '{{ route('municipal.youths.export', [], false) }}'
+        };
+
+        const exportUrl = `${routeMap[dataType]}?${params.toString()}`;
+        window.location.href = exportUrl;
+    }
 </script>
 @endsection

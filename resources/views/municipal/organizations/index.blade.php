@@ -38,12 +38,20 @@
         @endif
 
         <!-- Create Button -->
-        <div class="mb-6">
+        <div class="mb-6 flex gap-3 flex-wrap">
             <a href="{{ route('municipal.organizations.create') }}"
                class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
                 <i class="fas fa-plus-circle"></i>
                 <span>Create Organization</span>
             </a>
+            <button type="button" onclick="exportData('organizations', 'pdf')" class="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium">
+                <i class="fas fa-file-pdf"></i>
+                <span>Export PDF</span>
+            </button>
+            <button type="button" onclick="exportData('organizations', 'excel')" class="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium">
+                <i class="fas fa-file-excel"></i>
+                <span>Export Excel</span>
+            </button>
         </div>
 
         @if($organizations->isEmpty())
@@ -223,5 +231,17 @@
                 }, 5000);
             }
         });
+
+        function exportData(dataType, format) {
+            const routeMap = {
+                'accounts': '{{ route('municipal.accounts.export', [], false) }}',
+                'barangays': '{{ route('municipal.barangays.export', [], false) }}',
+                'organizations': '{{ route('municipal.organizations.export', [], false) }}',
+                'youths': '{{ route('municipal.youths.export', [], false) }}'
+            };
+
+            const exportUrl = `${routeMap[dataType]}?format=${format}`;
+            window.location.href = exportUrl;
+        }
     </script>
 @endsection

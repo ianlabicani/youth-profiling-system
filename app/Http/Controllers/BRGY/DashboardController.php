@@ -7,6 +7,7 @@ use App\Models\BarangayEvent;
 use App\Models\SKCouncil;
 use App\Models\Youth;
 use App\Services\DashboardDescriptionService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
@@ -187,5 +188,179 @@ class DashboardController extends Controller
             'councils', 'distinctPositionsCount', 'chairCount', 'secretaryCount', 'treasurerCount', 'kagawadTotal',
             'upcomingList', 'recentYouth', 'descriptions'
         ));
+    }
+
+    /**
+     * Export dashboard to PDF or Excel
+     */
+    public function export(string $format = 'pdf')
+    {
+        $userBarangay = auth()->user()->barangays()->first();
+        if (! $userBarangay) {
+            abort(403, 'No barangay assigned');
+        }
+
+        $barangayId = $userBarangay->id;
+
+        // Get dashboard data without caching to ensure fresh export
+        $totalYouth = Youth::where('barangay_id', $barangayId)->count();
+        $activeCouncils = SKCouncil::where('barangay_id', $barangayId)->where('is_active', true)->count();
+        $upcomingEvents = BarangayEvent::where('barangay_id', $barangayId)
+            ->whereBetween('date', [now()->toDateString(), now()->addDays(30)->toDateString()])
+            ->count();
+        $eventsThisYear = BarangayEvent::where('barangay_id', $barangayId)->whereYear('date', now()->year)->count();
+
+        $youthBySex = Youth::where('barangay_id', $barangayId)
+            ->selectRaw('sex, count(*) as total')
+            ->groupBy('sex')
+            ->pluck('total', 'sex')
+            ->toArray();
+
+        $youthByStatus = Youth::where('barangay_id', $barangayId)
+            ->selectRaw('status, count(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status')
+            ->toArray();
+
+        $education = Youth::where('barangay_id', $barangayId)
+            ->selectRaw('educational_attainment, count(*) as total')
+            ->groupBy('educational_attainment')
+            ->orderByDesc('total')
+            ->get();
+
+        $incomeRanges = Youth::where('barangay_id', $barangayId)
+            ->whereNotNull('household_income')
+            ->selectRaw('household_income, count(*) as total')
+            ->groupBy('household_income')
+            ->orderByRaw("FIELD(household_income, 'No Income', 'Below 10,000', '10,000 - 20,000', '20,000 - 30,000', '30,000 - 40,000', '40,000 - 50,000', 'Above 50,000')")
+            ->pluck('total', 'household_income')
+            ->toArray();
+
+        $ageBuckets = [
+            '15-17' => 0,
+            '18-20' => 0,
+            '21-24' => 0,
+            '25-30' => 0,
+        ];
+
+        $youths = Youth::where('barangay_id', $barangayId)->select('date_of_birth')->get();
+        foreach ($youths as $y) {
+            if (! $y->date_of_birth) {
+                continue;
+            }
+            $age = Carbon::parse($y->date_of_birth)->age;
+            if ($age >= 15 && $age <= 17) {
+                $ageBuckets['15-17']++;
+            } elseif ($age >= 18 && $age <= 20) {
+                $ageBuckets['18-20']++;
+            } elseif ($age >= 21 && $age <= 24) {
+                $ageBuckets['21-24']++;
+            } elseif ($age >= 25 && $age <= 30) {
+                $ageBuckets['25-30']++;
+            }
+        }
+
+        if ($format === 'excel') {
+            return $this->exportToExcel($userBarangay, $totalYouth, $activeCouncils, $upcomingEvents, $eventsThisYear, $youthBySex, $youthByStatus, $education, $incomeRanges, $ageBuckets);
+        } else {
+            return $this->exportToPdf($userBarangay, $totalYouth, $activeCouncils, $upcomingEvents, $eventsThisYear, $youthBySex, $youthByStatus, $education, $incomeRanges, $ageBuckets);
+        }
+    }
+
+    /**
+     * Export dashboard to Excel
+     */
+    private function exportToExcel($userBarangay, $totalYouth, $activeCouncils, $upcomingEvents, $eventsThisYear, $youthBySex, $youthByStatus, $education, $incomeRanges, $ageBuckets)
+    {
+        $filename = 'dashboard_' . str_slug($userBarangay->name) . '_' . now()->format('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=utf-8',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+
+        $callback = function () use ($userBarangay, $totalYouth, $activeCouncils, $upcomingEvents, $eventsThisYear, $youthBySex, $youthByStatus, $education, $incomeRanges, $ageBuckets) {
+            $file = fopen('php://output', 'w');
+
+            // Header
+            fputcsv($file, ['DASHBOARD REPORT']);
+            fputcsv($file, ['Barangay', $userBarangay->name ?? '']);
+            fputcsv($file, ['Generated', now()->format('Y-m-d H:i:s')]);
+            fputcsv($file, []);
+
+            // KPIs
+            fputcsv($file, ['KEY PERFORMANCE INDICATORS']);
+            fputcsv($file, ['Total Youth', $totalYouth]);
+            fputcsv($file, ['Active SK Councils', $activeCouncils]);
+            fputcsv($file, ['Upcoming Events (30 days)', $upcomingEvents]);
+            fputcsv($file, ['Events This Year', $eventsThisYear]);
+            fputcsv($file, []);
+
+            // Youth by Sex
+            fputcsv($file, ['YOUTH BY SEX']);
+            fputcsv($file, ['Sex', 'Count']);
+            foreach ($youthBySex as $sex => $count) {
+                fputcsv($file, [$sex ?? 'Unknown', $count]);
+            }
+            fputcsv($file, []);
+
+            // Youth by Status
+            fputcsv($file, ['YOUTH BY STATUS']);
+            fputcsv($file, ['Status', 'Count']);
+            foreach ($youthByStatus as $status => $count) {
+                fputcsv($file, [$status ?? 'Unknown', $count]);
+            }
+            fputcsv($file, []);
+
+            // Education
+            fputcsv($file, ['EDUCATIONAL ATTAINMENT']);
+            fputcsv($file, ['Education Level', 'Count']);
+            foreach ($education as $edu) {
+                fputcsv($file, [$edu->educational_attainment ?? 'Unknown', $edu->total]);
+            }
+            fputcsv($file, []);
+
+            // Age Buckets
+            fputcsv($file, ['AGE DISTRIBUTION']);
+            fputcsv($file, ['Age Range', 'Count']);
+            foreach ($ageBuckets as $range => $count) {
+                fputcsv($file, [$range, $count]);
+            }
+            fputcsv($file, []);
+
+            // Income Ranges
+            fputcsv($file, ['HOUSEHOLD INCOME']);
+            fputcsv($file, ['Income Range', 'Count']);
+            foreach ($incomeRanges as $income => $count) {
+                fputcsv($file, [$income ?? 'Unknown', $count]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Export dashboard to PDF
+     */
+    private function exportToPdf($userBarangay, $totalYouth, $activeCouncils, $upcomingEvents, $eventsThisYear, $youthBySex, $youthByStatus, $education, $incomeRanges, $ageBuckets)
+    {
+        $data = [
+            'barangay' => $userBarangay,
+            'totalYouth' => $totalYouth,
+            'activeCouncils' => $activeCouncils,
+            'upcomingEvents' => $upcomingEvents,
+            'eventsThisYear' => $eventsThisYear,
+            'youthBySex' => $youthBySex,
+            'youthByStatus' => $youthByStatus,
+            'education' => $education,
+            'incomeRanges' => $incomeRanges,
+            'ageBuckets' => $ageBuckets,
+            'date' => now()->format('Y-m-d H:i:s'),
+        ];
+
+        $pdf = Pdf::loadView('exports.brgy-dashboard-pdf', $data);
+        return $pdf->download('dashboard_' . str_slug($userBarangay->name) . '_' . now()->format('Y-m-d_H-i-s') . '.pdf');
     }
 }

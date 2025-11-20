@@ -5,11 +5,25 @@
     <div class="max-w-7xl mx-auto px-4">
         <!-- Header Section -->
         <div class="mb-8">
-            <h1 class="text-4xl font-bold text-gray-900 mb-2">{{ $userBarangay->name }} Dashboard</h1>
-            <p class="text-gray-600 flex items-center gap-2">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
-                Youth Profiling System Analytics
-            </p>
+            <div class="flex items-center justify-between gap-4">
+                <div class="flex-1">
+                    <h1 class="text-4xl font-bold text-gray-900 mb-2">{{ $userBarangay->name }} Dashboard</h1>
+                    <p class="text-gray-600 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+                        Youth Profiling System Analytics
+                    </p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="exportDashboard('pdf')" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8m0 8l-6-2m6 2l6-2"/></svg>
+                        Export PDF
+                    </button>
+                    <button onclick="exportDashboard('excel')" class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        Export Excel
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- KPI cards with icons -->
@@ -511,6 +525,12 @@
             data: { labels: incomeLabels, datasets: [{ label: 'Count', data: incomeData, backgroundColor: getColors(incomeLabels.length) }] },
             options: { indexAxis: 'y', scales: { x: { beginAtZero: true } }, plugins: { legend: { display: false } } }
         });
+    }
+
+    // Export function
+    function exportDashboard(format) {
+        const url = `{{ route('brgy.dashboard.export') }}?format=${format}`;
+        window.location.href = url;
     }
 </script>
 @endsection

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Municipal;
 use App\Http\Controllers\Controller;
 use App\Models\Barangay;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class BarangayController extends Controller
 {
@@ -135,5 +136,69 @@ class BarangayController extends Controller
         $skCouncil = $barangay->skCouncils()->where('id', $id)->firstOrFail();
 
         return view('municipal.barangays.sk-councils.show', compact('barangay', 'skCouncil'));
+    }
+
+    /**
+     * Export barangays to PDF or Excel
+     */
+    public function export(Request $request)
+    {
+        $format = $request->query('format', 'pdf');
+        $barangays = Barangay::orderBy('name')->get();
+
+        if ($format === 'excel') {
+            return $this->exportToExcel($barangays);
+        } else {
+            return $this->exportToPdf($barangays);
+        }
+    }
+
+    /**
+     * Export to Excel format
+     */
+    private function exportToExcel($barangays)
+    {
+        $filename = 'barangays_' . now()->format('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=utf-8',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+
+        $data = [];
+        $data[] = ['ID', 'Name', 'Created At'];
+
+        foreach ($barangays as $barangay) {
+            $data[] = [
+                $barangay->id,
+                $barangay->name,
+                $barangay->created_at->format('Y-m-d H:i:s'),
+            ];
+        }
+
+        $callback = function () use ($data) {
+            $file = fopen('php://output', 'w');
+            foreach ($data as $row) {
+                fputcsv($file, $row);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Export to PDF format
+     */
+    private function exportToPdf($barangays)
+    {
+        $data = [
+            'barangays' => $barangays,
+            'title' => 'Barangays Report',
+            'date' => now()->format('Y-m-d H:i:s'),
+        ];
+
+        $pdf = Pdf::loadView('exports.barangays-pdf', $data);
+        return $pdf->download('barangays_' . now()->format('Y-m-d_H-i-s') . '.pdf');
     }
 }
