@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BarangayEvent;
 use App\Models\SKCouncil;
 use App\Models\Youth;
+use App\Services\DashboardDescriptionService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
@@ -165,11 +166,26 @@ class DashboardController extends Controller
         $upcomingList = $data['upcomingList'];
         $recentYouth = $data['recentYouth'];
 
+        // Get AI descriptions for dashboard stats
+        $descService = new DashboardDescriptionService();
+        $descriptions = [
+            'total_youth' => $descService->getDescription('total_youth', $totalYouth, "Barangay: {$userBarangay->name}"),
+            'active_councils' => $descService->getDescription('active_councils', $activeCouncils, "Barangay: {$userBarangay->name}"),
+            'upcoming_events' => $descService->getDescription('upcoming_events', $upcomingEvents),
+            'events_this_year' => $descService->getDescription('events_this_year', $eventsThisYear),
+            'youth_by_sex' => $descService->getDescription('youth_by_sex', array_sum($youthBySex), "Barangay: {$userBarangay->name}"),
+            'youth_by_status' => $descService->getDescription('youth_by_status', array_sum($youthByStatus), "Barangay: {$userBarangay->name}"),
+            'education' => $descService->getDescription('education', $education->count(), "Barangay: {$userBarangay->name}"),
+            'age_distribution' => $descService->getDescription('age_distribution', array_sum($ageBuckets)),
+            'household_income' => $descService->getDescription('household_income', array_sum($incomeRanges), "Barangay: {$userBarangay->name}"),
+            'council_positions' => $descService->getDescription('council_positions', $distinctPositionsCount),
+        ];
+
         return view('brgy.dashboard', compact(
             'userBarangay', 'totalYouth', 'activeCouncils', 'upcomingEvents', 'eventsThisYear',
             'youthBySex', 'youthByStatus', 'education', 'incomeRanges', 'ageBuckets', 'months', 'dataRegs',
             'councils', 'distinctPositionsCount', 'chairCount', 'secretaryCount', 'treasurerCount', 'kagawadTotal',
-            'upcomingList', 'recentYouth'
+            'upcomingList', 'recentYouth', 'descriptions'
         ));
     }
 }

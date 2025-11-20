@@ -1,0 +1,13 @@
+{
+    "name": "youth-profiling-gemini",
+    "version": "1.0.0",
+    "description": "Gemini API integration for dashboard descriptions",
+    "type": "module",
+    "main": "gemini-api.js",
+    "scripts": {
+        "test": "node gemini-api.js total_youth 150 'Barangay: Test'"
+    },
+    "dependencies": {
+        "@google/generative-ai": "^0.21.0"
+    }
+}

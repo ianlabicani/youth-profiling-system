@@ -45,6 +45,10 @@
                     <i class="fas fa-map mr-3"></i>Heatmap
                 </a>
 
+                <a href="{{ route('municipal.reports.index') }}" class="flex items-center px-4 py-2 {{ request()->is('reports*') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600' }} rounded-lg transition">
+                    <i class="fas fa-chart-bar mr-3"></i>Reports
+                </a>
+
             </nav>
 
             <!-- Profile Dropdown at bottom -->

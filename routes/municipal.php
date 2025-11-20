@@ -30,4 +30,14 @@ Route::middleware(['auth', 'verified'])->prefix('municipal')->name('municipal.')
     Route::get('barangays/{barangay}/youths/{youth}', [BarangayController::class, 'youthShow'])->name('barangays.youths.show');
     Route::get('barangays/{barangay}/sk-councils', [BarangayController::class, 'skCouncils'])->name('barangays.sk-councils.index');
     Route::get('barangays/{barangay}/sk-councils/{skCouncil}', [BarangayController::class, 'skCouncilShow'])->name('barangays.sk-councils.show');
+
+    // Reports Routes
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Municipal\ReportController::class, 'index'])->name('index');
+        Route::get('/demographics', [\App\Http\Controllers\Municipal\ReportController::class, 'demographics'])->name('demographics');
+        Route::get('/leadership', [\App\Http\Controllers\Municipal\ReportController::class, 'leadership'])->name('leadership');
+        Route::get('/engagement', [\App\Http\Controllers\Municipal\ReportController::class, 'engagement'])->name('engagement');
+        Route::get('/profiles', [\App\Http\Controllers\Municipal\ReportController::class, 'profiles'])->name('profiles');
+        Route::get('/data-quality', [\App\Http\Controllers\Municipal\ReportController::class, 'dataQuality'])->name('data-quality');
+    });
 });

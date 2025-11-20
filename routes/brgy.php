@@ -24,4 +24,14 @@ Route::middleware(['auth', 'verified'])->prefix('brgy')->name('brgy.')->group(fu
     // Barangay Events Management Routes
     Route::resource('events', BarangayEventController::class);
 
+    // Reports Routes
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\BRGY\ReportController::class, 'index'])->name('index');
+        Route::get('/demographics', [\App\Http\Controllers\BRGY\ReportController::class, 'demographics'])->name('demographics');
+        Route::get('/leadership', [\App\Http\Controllers\BRGY\ReportController::class, 'leadership'])->name('leadership');
+        Route::get('/engagement', [\App\Http\Controllers\BRGY\ReportController::class, 'engagement'])->name('engagement');
+        Route::get('/profiles', [\App\Http\Controllers\BRGY\ReportController::class, 'profiles'])->name('profiles');
+        Route::get('/data-quality', [\App\Http\Controllers\BRGY\ReportController::class, 'dataQuality'])->name('data-quality');
+    });
+
 });

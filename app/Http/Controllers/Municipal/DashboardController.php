@@ -7,6 +7,7 @@ use App\Models\BarangayEvent;
 use App\Models\Organization;
 use App\Models\SKCouncil;
 use App\Models\Youth;
+use App\Services\DashboardDescriptionService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
@@ -162,7 +163,30 @@ class DashboardController extends Controller
             );
         });
 
-        return view('municipal.dashboard', $data);
+        // Get AI descriptions for dashboard stats
+        $descService = new DashboardDescriptionService();
+        $youthBySexTotal = array_sum($data['youthBySex'] ?? []);
+        $youthByStatusTotal = array_sum($data['youthByStatus'] ?? []);
+        $educationCount = $data['education']->count();
+        $ageBucketsTotal = array_sum($data['ageBuckets'] ?? []);
+        $incomeRangesTotal = array_sum($data['incomeRanges'] ?? []);
+
+        $descriptions = [
+            'total_youth' => $descService->getDescription('total_youth', $data['totalYouth'], 'Municipality-wide'),
+            'total_barangays' => $descService->getDescription('total_barangays', $data['totalBarangays']),
+            'active_councils' => $descService->getDescription('active_councils', $data['activeCouncils'], 'Municipality-wide'),
+            'total_organizations' => $descService->getDescription('total_organizations', $data['totalOrganizations']),
+            'out_of_school' => $descService->getDescription('out_of_school', $data['outOfSchoolCount']),
+            'youth_by_sex' => $descService->getDescription('youth_by_sex', $youthBySexTotal, 'Municipality-wide'),
+            'youth_by_status' => $descService->getDescription('youth_by_status', $youthByStatusTotal, 'Municipality-wide'),
+            'education' => $descService->getDescription('education', $educationCount, 'Municipality-wide'),
+            'age_distribution' => $descService->getDescription('age_distribution', $ageBucketsTotal),
+            'household_income' => $descService->getDescription('household_income', $incomeRangesTotal, 'Municipality-wide'),
+            'council_positions' => $descService->getDescription('council_positions', $data['distinctPositionsCount']),
+            'youth_by_barangay' => $descService->getDescription('youth_by_barangay', $data['totalYouth'], 'Top 10'),
+        ];
+
+        return view('municipal.dashboard', array_merge($data, compact('descriptions')));
     }
 
     public function heatmap()
