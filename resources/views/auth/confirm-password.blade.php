@@ -68,7 +68,7 @@
 
             <!-- Footer Note -->
             <p class="mt-8 text-center text-sm text-gray-600">
-                Protected by SJDPP Church Security
+                Protected by Youth Profiling System Security
             </p>
         </div>
     </div>

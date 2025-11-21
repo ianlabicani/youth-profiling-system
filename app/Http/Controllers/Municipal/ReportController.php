@@ -172,52 +172,6 @@ class ReportController extends Controller
     /**
      * Youth Engagement & Events Report
      */
-    public function engagement(Request $request)
-    {
-        $barangay = $request->get('barangay');
-        $startDate = $request->get('start_date');
-        $endDate = $request->get('end_date');
-
-        $query = BarangayEvent::with('barangay', 'skCouncil');
-
-        if ($barangay) {
-            $query->where('barangay_id', $barangay);
-        }
-
-        if ($startDate) {
-            $query->where('date', '>=', $startDate);
-        }
-
-        if ($endDate) {
-            $query->where('date', '<=', $endDate);
-        }
-
-        $events = $query->get();
-
-        $eventsByBarangay = BarangayEvent::groupBy('barangay_id')
-            ->selectRaw('barangay_id, count(*) as count')
-            ->get()
-            ->pluck('count', 'barangay_id')
-            ->toArray();
-
-        $reportData = [
-            'total_events' => $events->count(),
-            'events_by_barangay' => $eventsByBarangay,
-            'participation_rate' => round(($events->sum('participants_count') / max(1, Youth::count())) * 100, 2),
-            'active_participants' => $events->sum('participants_count'),
-        ];
-
-        $insights = $this->reportGenerator->generateInsights(
-            'youth_engagement',
-            $reportData,
-            $barangay ? "Barangay: {$barangay}" : 'Municipality-wide'
-        );
-
-        $barangays = Barangay::all();
-
-        return view('municipal.reports.engagement', compact('events', 'reportData', 'insights', 'barangays', 'barangay', 'startDate', 'endDate'));
-    }
-
     /**
      * Youth Profiles Report (Individual Records)
      */
@@ -251,8 +205,10 @@ class ReportController extends Controller
             'total_records' => Youth::count(),
             'active_youth' => Youth::where('status', 'active')->count(),
             'archived_youth' => Youth::where('status', 'archived')->count(),
-            'average_age' => round(Youth::selectRaw('YEAR(CURDATE()) - YEAR(date_of_birth) as age')
-                ->avg('age'), 1),
+            'average_age' => round(Youth::whereNotNull('date_of_birth')
+                ->selectRaw('AVG(YEAR(CURDATE()) - YEAR(date_of_birth)) as avg_age')
+                ->pluck('avg_age')
+                ->first() ?? 0, 1),
             'contact_available' => Youth::whereNotNull('contact_number')->count(),
         ];
 
@@ -270,37 +226,6 @@ class ReportController extends Controller
     /**
      * Data Quality & Completeness Report
      */
-    public function dataQuality(Request $request)
-    {
-        $totalRecords = Youth::count();
-
-        $completeRecords = Youth::whereNotNull('first_name')
-            ->whereNotNull('last_name')
-            ->whereNotNull('date_of_birth')
-            ->whereNotNull('barangay_id')
-            ->count();
-
-        $missingContacts = Youth::whereNull('contact_number')->count();
-
-        $incompleteRecords = $totalRecords - $completeRecords;
-
-        $accuracyScore = $totalRecords > 0
-            ? round(($completeRecords / $totalRecords) * 100, 2)
-            : 0;
-
-        $reportData = [
-            'total_records' => $totalRecords,
-            'complete_records' => $completeRecords,
-            'missing_contacts' => $missingContacts,
-            'incomplete_profiles' => $incompleteRecords,
-            'accuracy_score' => $accuracyScore,
-        ];
-
-        $insights = $this->reportGenerator->generateInsights('data_quality', $reportData);
-
-        return view('municipal.reports.data-quality', compact('reportData', 'insights'));
-    }
-
     /**
      * Group youth by age groups
      */

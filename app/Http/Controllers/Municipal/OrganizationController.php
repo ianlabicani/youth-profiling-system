@@ -558,7 +558,6 @@ class OrganizationController extends Controller
                 'sex' => $member->sex,
                 'contact_number' => $member->contact_number,
                 'email' => $member->email,
-                'status' => $member->status,
                 'barangay_name' => $member->barangay?->name ?? 'N/A',
             ];
         })->toArray();

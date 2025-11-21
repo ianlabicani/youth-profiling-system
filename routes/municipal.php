@@ -45,8 +45,6 @@ Route::middleware(['auth', 'verified'])->prefix('municipal')->name('municipal.')
         Route::get('/', [\App\Http\Controllers\Municipal\ReportController::class, 'index'])->name('index');
         Route::get('/demographics', [\App\Http\Controllers\Municipal\ReportController::class, 'demographics'])->name('demographics');
         Route::get('/leadership', [\App\Http\Controllers\Municipal\ReportController::class, 'leadership'])->name('leadership');
-        Route::get('/engagement', [\App\Http\Controllers\Municipal\ReportController::class, 'engagement'])->name('engagement');
         Route::get('/profiles', [\App\Http\Controllers\Municipal\ReportController::class, 'profiles'])->name('profiles');
-        Route::get('/data-quality', [\App\Http\Controllers\Municipal\ReportController::class, 'dataQuality'])->name('data-quality');
     });
 });

@@ -265,7 +265,6 @@
                     <th>Sex</th>
                     <th>Contact Number</th>
                     <th>Email</th>
-                    <th>Status</th>
                     <th>Barangay</th>
                 </tr>
             </thead>
@@ -283,7 +282,6 @@
                         <td>{{ $member['sex'] ?? 'N/A' }}</td>
                         <td>{{ $member['contact_number'] ?? 'N/A' }}</td>
                         <td>{{ $member['email'] ?? 'N/A' }}</td>
-                        <td>{{ $member['status'] ?? 'N/A' }}</td>
                         <td>{{ $member['barangay_name'] ?? 'N/A' }}</td>
                     </tr>
                 @endforeach
