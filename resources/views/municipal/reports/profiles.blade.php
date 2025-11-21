@@ -85,7 +85,7 @@
                                             <li class="text-slate-700">
                                                 {!! preg_replace_callback(
                                                     ['/\*\*(.*?)\*\*/', '/\*(.*?)\*/'],
-                                                    function($m) { 
+                                                    function($m) {
                                                         if (str_starts_with($m[0], '**')) {
                                                             return '<strong>' . htmlspecialchars($m[1]) . '</strong>';
                                                         } else {
@@ -103,7 +103,7 @@
                                 <p class="text-slate-700 leading-relaxed">
                                     {!! preg_replace_callback(
                                         ['/\*\*(.*?)\*\*/', '/\*(.*?)\*/'],
-                                        function($m) { 
+                                        function($m) {
                                             if (str_starts_with($m[0], '**')) {
                                                 return '<strong>' . htmlspecialchars($m[1]) . '</strong>';
                                             } else {
