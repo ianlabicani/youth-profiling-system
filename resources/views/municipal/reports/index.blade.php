@@ -124,36 +124,7 @@
                 </div>
             </div>
 
-            <!-- Engagement Report -->
-            <div class="bg-white rounded-lg border border-slate-200 overflow-hidden hover:shadow-xl transition group">
-                <div class="h-2 bg-gradient-to-r from-orange-400 to-orange-600"></div>
-                <div class="p-8">
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="text-4xl">🎯</span>
-                        <h2 class="text-2xl font-bold text-slate-900">Engagement</h2>
-                    </div>
-                    <p class="text-slate-600 mb-6">Track youth participation in events and programs. Measure engagement rates and identify trends.</p>
 
-                    <div class="space-y-3 mb-6">
-                        <div class="flex items-center gap-2 text-sm text-slate-600">
-                            <svg class="w-4 h-4 text-orange-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 10 10.293 5.707a1 1 0 010-1.414z"/></path></svg>
-                            Event activity summary
-                        </div>
-                        <div class="flex items-center gap-2 text-sm text-slate-600">
-                            <svg class="w-4 h-4 text-orange-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 10 10.293 5.707a1 1 0 010-1.414z"/></path></svg>
-                            Participation rates
-                        </div>
-                        <div class="flex items-center gap-2 text-sm text-slate-600">
-                            <svg class="w-4 h-4 text-orange-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 10 10.293 5.707a1 1 0 010-1.414z"/></path></svg>
-                            Event effectiveness analysis
-                        </div>
-                    </div>
-
-                    <a href="{{ route('municipal.reports.engagement') }}" class="inline-block px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 font-medium transition group-hover:translate-x-1">
-                        View Report →
-                    </a>
-                </div>
-            </div>
 
             <!-- Youth Profiles Report -->
             <div class="bg-white rounded-lg border border-slate-200 overflow-hidden hover:shadow-xl transition group">
@@ -186,36 +157,6 @@
                 </div>
             </div>
 
-            <!-- Data Quality Report -->
-            <div class="bg-white rounded-lg border border-slate-200 overflow-hidden hover:shadow-xl transition group md:col-span-2">
-                <div class="h-2 bg-gradient-to-r from-red-400 to-red-600"></div>
-                <div class="p-8">
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="text-4xl">✓</span>
-                        <h2 class="text-2xl font-bold text-slate-900">Data Quality</h2>
-                    </div>
-                    <p class="text-slate-600 mb-6">Monitor data completeness and accuracy. Identify missing information and records requiring attention.</p>
-
-                    <div class="grid grid-cols-3 gap-6 mb-6">
-                        <div class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 10 10.293 5.707a1 1 0 010-1.414z"/></path></svg>
-                            <span class="text-sm text-slate-600">Data completeness metrics</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 10 10.293 5.707a1 1 0 010-1.414z"/></path></svg>
-                            <span class="text-sm text-slate-600">Missing information tracking</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 10 10.293 5.707a1 1 0 010-1.414z"/></path></svg>
-                            <span class="text-sm text-slate-600">Improvement recommendations</span>
-                        </div>
-                    </div>
-
-                    <a href="{{ route('municipal.reports.data-quality') }}" class="inline-block px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium transition group-hover:translate-x-1">
-                        View Report →
-                    </a>
-                </div>
-            </div>
         </div>
 
         <!-- Report Features Section -->

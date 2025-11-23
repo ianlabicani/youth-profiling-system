@@ -45,6 +45,10 @@
 @endphp
 
 <div class="p-8">
+    <a href="{{ route('municipal.reports.index') }}"
+       class="inline-block mb-6 px-4 py-2 bg-slate-200 text-slate-800 rounded hover:bg-slate-300 transition">
+        ← Back
+    </a>
     <!-- AI Insights Section -->
     @if(isset($insights))
         <div class="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-lg p-6 border border-indigo-200 mb-8">
